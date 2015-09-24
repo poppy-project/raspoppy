@@ -1,4 +1,4 @@
-# Procedure to setup a RPI2 for your Poppy Creature
+# Setup a RPI2 for your Poppy Creature
 
 We are here describing the set of tools we use to setup a Raspberry board for a Poppy Creature. While we try to keep this procedure as simple as possible, it still requires a good knowledge of Linux OS and of Python. For those who are not interrested in digging into those details, we will soon provide ready-to-use SD-card images which you can directly download and put in your Raspberry. 
 
