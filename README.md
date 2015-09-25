@@ -120,7 +120,13 @@ You can also configure the OS so it automatically launches the driver at startup
   echo "bcm2835-v4l2" | sudo tee -a /etc/modules
 ```
 
+### OpenCV 3
 
+Then we install the standard computer vision library [OpenCV](http://opencv.org) using a conda recipe as well as it is very long to compile. Make sure it will install the version 3.
+
+```bash
+conda install opencv -y
+```
 
 
 ## Troubleshooting
