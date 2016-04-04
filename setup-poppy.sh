@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-creature=$2
+creature=$1
 
 export PATH="$HOME/miniconda/bin:$PATH"
 
