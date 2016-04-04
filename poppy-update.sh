@@ -24,5 +24,6 @@ else
 fi
 echo "Please check $logs for details."
 
+rm auto-update.sh
 cp $logs "$logs.$now.bkp"
 rm $lockfile
