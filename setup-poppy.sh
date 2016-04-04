@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-hostname=$1
 creature=$2
 
 export PATH="$HOME/miniconda/bin:$PATH"
@@ -26,7 +25,7 @@ setup_puppet_master()
     pushd puppet-master
         conda install flask pyyaml requests
 
-        python bootstrap.py $hostname $creature
+        python bootstrap.py $HOSTNAME $creature
         install_snap "$(pwd)"
     popd
 }
