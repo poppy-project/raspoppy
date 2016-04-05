@@ -2,7 +2,6 @@
 
 username=$1
 password=$2
-hostname=$3
 
 install_custom_raspiconfig()
 {
@@ -33,14 +32,6 @@ setup_user()
 
 system_setup()
 {
-    hostname=$1
-
-    echo -e "\e[33mExpand partition.\e[0m"
-    sudo raspi-config --expand-rootfs
-
-    echo -e "\e[33mChange hostname to \e[4m$hostname.\e[0m"
-    sudo raspi-config --change-hostname $hostname
-
     echo -e "\e[33mEnable camera.\e[0m"
     sudo raspi-config --enable-camera
     echo "bcm2835-v4l2" | sudo tee -a /etc/modules
@@ -59,6 +50,6 @@ install_additional_packages()
 }
 
 install_custom_raspiconfig
-system_setup $hostname
-install_additional_packages
 setup_user $username $password
+install_additional_packages
+system_setup
