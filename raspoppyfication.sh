@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 creature=$1
-creature="poppy-ergo-jr"
 
 username="poppy"
 password="poppy"
