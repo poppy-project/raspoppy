@@ -19,7 +19,7 @@ While we try to keep this procedure as simple as possible, it still requires a g
     * [x] jupyter 4.0.6
     * [x] matplotlib 1.5.0
     * [x] nbextensions alpha
-    * [x] pypot 2.11.1
+    * [x] pypot 2.11.3
     * [x] poppy-creatures 1.8.0
     * [x] poppy-ergo-jr 1.6.0
     * [x] hampy 1.4.1
