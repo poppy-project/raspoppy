@@ -140,10 +140,11 @@ with open(os.path.expanduser('~/.poppy_config.yaml')) as f:
     config = yaml.load(f)
 
 
-call(['bash', os.path.expanduser('~/.poppy-update.sh'),
-      config['update']['url'],
-      config['update']['logfile'],
-      config['update']['lockfile']])
+with open(config['update']['logfile'], 'w') as f:
+    call(['bash', os.path.expanduser('~/.poppy-update.sh'),
+          config['update']['url'],
+          config['update']['logfile'],
+          config['update']['lockfile']], stdout=f, stderr=f)
 EOF
     chmod +x poppy-update
     mv poppy-update $HOME/miniconda/bin/

@@ -12,7 +12,10 @@ echo "Downloading update file form $url..."
 wget $url -O auto-update.sh
 if [ $? -ne 0 ]; then
     echo "Could not download file from $url."
+    echo
+    echo "*************************************************************"
     echo "Check that your robot is connected to internet and try again."
+    echo "*************************************************************"
     exit 1
 fi
 
