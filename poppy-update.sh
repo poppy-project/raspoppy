@@ -25,7 +25,6 @@ if [ $? -ne 0 ]; then
 else
     echo "Update successful!"
 fi
-echo "Please check $logs for details."
 
 rm auto-update.sh
 cp $logs "$logs.$now.bkp"
