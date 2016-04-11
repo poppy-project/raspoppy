@@ -94,7 +94,7 @@ EOF
     cat >> $HOME/puppet-master/launch.sh << 'EOF'
 export PATH=$HOME/miniconda/bin:$PATH
 pushd $HOME/puppet-master
-    python bouteillederouge.py 2>&1 > /tmp/bouteillederouge.log
+    python bouteillederouge.py 1>&2 2> /tmp/bouteillederouge.log
 popd
 EOF
     chmod +x $HOME/puppet-master/launch.sh $HOME/puppet-master/start-pwid
