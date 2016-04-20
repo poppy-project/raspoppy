@@ -125,7 +125,7 @@ EOF
 setup_update()
 {
     cd || exit
-    wget https://raw.githubusercontent.com/pierre-rouanet/raspoppy/master/poppy-update.sh -O ~/.poppy-update.sh
+    wget https://raw.githubusercontent.com/poppy-project/raspoppy/master/poppy-update.sh -O ~/.poppy-update.sh
 
     cat >> poppy-update << EOF
 #!/usr/bin/env python

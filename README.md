@@ -55,7 +55,7 @@ Log again in your Raspberry. You can connect via ssh or directly plug a screen a
 *Note: the rest of the procedure will require to have an internet access on the Raspberry!*
 
 ```bash
-curl -L https://raw.githubusercontent.com/pierre-rouanet/raspoppy/master/raspoppyfication.sh | bash -s "poppy-ergo-jr"
+curl -L https://raw.githubusercontent.com/poppy-project/raspoppy/master/raspoppyfication.sh | bash -s "poppy-ergo-jr"
 ```
 
 This one liner will install all the software detailed above, setup the control interface. So when it's done you should just reboot your Raspberry and connect to http://poppy.local.

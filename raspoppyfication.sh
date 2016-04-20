@@ -6,7 +6,7 @@ username="poppy"
 password="poppy"
 hostname="poppy"
 
-url_root="https://raw.githubusercontent.com/pierre-rouanet/raspoppy/master"
+url_root="https://raw.githubusercontent.com/poppy-project/raspoppy/master"
 
 cd /tmp || exit
 wget $url_root/setup-system.sh
