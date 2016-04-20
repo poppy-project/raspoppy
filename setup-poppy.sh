@@ -34,7 +34,7 @@ setup_puppet_master()
 install_snap()
 {
     pushd $1
-        wget https://github.com/jmoenig/Snap--Build-Your-Own-Blocks/archive/master.zip
+        wget https://github.com/jmoenig/Snap--Build-Your-Own-Blocks/archive/master.zip -O master.zip
         unzip master.zip
         rm master.zip
         mv Snap--Build-Your-Own-Blocks-master snap
@@ -47,10 +47,10 @@ install_snap()
             ln -s $project snap/Examples/
 
             filename=$(basename "$project")
-            echo -e "$filename\tPoppy robots" >> snap/Examples/EXAMPLES
+            echo -e "$filename\tPoppy robots" > snap/Examples/EXAMPLES
         done
 
-        wget https://github.com/poppy-project/poppy-monitor/archive/master.zip
+        wget https://github.com/poppy-project/poppy-monitor/archive/master.zip -O master.zip
         unzip master.zip
         rm master.zip
         mv poppy-monitor-master monitor
