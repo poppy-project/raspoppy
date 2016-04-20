@@ -18,7 +18,7 @@ install_notebooks()
 setup_puppet_master()
 {
     cd || exit
-    wget https://github.com/pierre-rouanet/puppet-master/archive/master.zip
+    wget https://github.com/poppy-project/puppet-master/archive/master.zip
     unzip master.zip
     rm master.zip
     mv puppet-master-master puppet-master
