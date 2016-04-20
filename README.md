@@ -59,3 +59,7 @@ curl -L https://raw.githubusercontent.com/pierre-rouanet/raspoppy/master/raspopp
 ```
 
 This one liner will install all the software detailed above, setup the control interface. So when it's done you should just reboot your Raspberry and connect to http://poppy.local.
+
+### Shrink the ISO
+
+To reduce the size of the image, you can follow [these instructions](./shrink-iso.md). Be careful though, a bad manipulation could mess with your partitions!

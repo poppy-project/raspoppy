@@ -2,12 +2,12 @@
 
 ## Shrink it
 * Mount the image using another Linux (a Raspberry-Pi works).
-* Find the name of the device using *fdisk -l* (in our case it's /dev/sda)
+* Find the name of the device using *sudo fdisk -l* (in our case it's /dev/sda)
 * Resize the filesystem
     * *sudo e2fsck -f /dev/sda2*
-    * *sudo resize2fs /dev/sda2 3000M* (3G is enough for us)
+    * *sudo resize2fs /dev/sda2 2500M* (2.5G should be enough for us)
 * Resize the partition
-    * *sudo parted /dev/sda resizepart 2 3500M*
+    * *sudo parted /dev/sda resizepart 2 2700M* (The partition must be larger than the file system)
 
 ##  Expand it on first boot
 * Boot on the card freshly shrinked
@@ -17,4 +17,4 @@
 
 ## Make an image file
  * copy the image using dd and count
-    * *sudo dd bs=1m count=4000 if=/dev/rdisk2 of=poppy-ergo-jr.iso*
+    * *sudo dd bs=1m count=3000 if=/dev/rdisk2 of=poppy-ergo-jr.iso*
