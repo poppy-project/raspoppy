@@ -17,4 +17,4 @@
 
 ## Make an image file
  * copy the image using dd and count
-    * *sudo dd bs=1m count=3000 if=/dev/rdisk2 of=poppy-ergo-jr.iso*
+    * *sudo dd bs=1m count=3000 if=/dev/rdisk2 of=poppy-ergo-jr.img*
