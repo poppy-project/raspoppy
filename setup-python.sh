@@ -54,30 +54,20 @@ if not os.path.exists(d):
 
 autostart_jupyter()
 {
-    cat >> jupyterd << 'EOF'
-#!/bin/bash
-# kFreeBSD do not accept scripts as interpreters, using #!/bin/sh and sourcing.
-if [ true != "$INIT_D_SCRIPT_SOURCED" ] ; then
-    set "$0" "$@"; INIT_D_SCRIPT_SOURCED=true . /lib/init/init-d-script
-fi
-### BEGIN INIT INFO
-# Provides:          jupyterd
-# Required-Start:    $remote_fs $syslog $network
-# Required-Stop:     $remote_fs $syslog
-# Default-Start:     2 3 4 5
-# Default-Stop:      0 1 6
-# Short-Description: Jupyter notebooks daemon
-# Description:       Enables Jupyter notebooks
-### END INIT INFO
 
-# Author: Poppy Project <contact@poppy-project.org>
+    cat >> jupyter.service << EOF
+[Unit]
+Description=Jupyter service
 
-DESC="Jupyter notebooks"
+[Service]
+Type=simple
+ExecStart=$HOME/.jupyter/start-daemon &
+
+[Install]
+WantedBy=multi-user.target
 EOF
-    echo "DAEMON=$HOME/.jupyter/start-daemon" >> jupyterd
 
-    sudo mv jupyterd /etc/init.d/jupyterd
-    sudo chmod 755 /etc/init.d/jupyterd
+    sudo mv jupyter.service /lib/systemd/system/jupyter.service
 
     cat >> $HOME/.jupyter/launch.sh << 'EOF'
 export PATH=$HOME/miniconda/bin:$PATH
@@ -90,7 +80,8 @@ su - $(whoami) -c "bash $HOME/.jupyter/launch.sh"
 EOF
 
     chmod +x $HOME/.jupyter/launch.sh $HOME/.jupyter/start-daemon
-    sudo update-rc.d jupyterd defaults -f
+    sudo systemctl daemon-reload
+    sudo systemctl enable jupyter.service
 }
 
 install_conda

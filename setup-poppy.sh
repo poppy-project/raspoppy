@@ -61,30 +61,19 @@ autostartup_webinterface()
 {
     cd || exit
 
-    cat >> pwid << 'EOF'
-#!/bin/bash
-# kFreeBSD do not accept scripts as interpreters, using #!/bin/sh and sourcing.
-if [ true != "$INIT_D_SCRIPT_SOURCED" ] ; then
-set "$0" "$@"; INIT_D_SCRIPT_SOURCED=true . /lib/init/init-d-script
-fi
-### BEGIN INIT INFO
-# Provides:          pwid
-# Required-Start:    $remote_fs $syslog $network
-# Required-Stop:     $remote_fs $syslog
-# Default-Start:     2 3 4 5
-# Default-Stop:      0 1 6
-# Short-Description: Poppy Web Interface
-# Description:       Enables Poppy Web Interface
-### END INIT INFO
+    cat >> puppet-master.service << EOF
+[Unit]
+Description=Puppet Master service
 
-# Author: Poppy Project <contact@poppy-project.org>
+[Service]
+Type=simple
+ExecStart=$HOME/puppet-master/start-pwid &
 
-DESC="Poppy Web Interface"
+[Install]
+WantedBy=multi-user.target
 EOF
-    echo "DAEMON=$HOME/puppet-master/start-pwid" >> pwid
 
-    sudo mv pwid /etc/init.d/pwid
-    sudo chmod 755 /etc/init.d/pwid
+    sudo mv puppet-master.service /lib/systemd/system/puppet-master.service
 
     cat >> $HOME/puppet-master/start-pwid << EOF
 #!/bin/bash
@@ -98,7 +87,9 @@ pushd $HOME/puppet-master
 popd
 EOF
     chmod +x $HOME/puppet-master/launch.sh $HOME/puppet-master/start-pwid
-    sudo update-rc.d pwid defaults -f
+
+    sudo systemctl daemon-reload
+    sudo systemctl enable puppet-master.service
 }
 
 redirect_port80_webinterface()
