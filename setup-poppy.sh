@@ -43,11 +43,15 @@ install_snap()
         ln -s $pypot_root/server/snap_projects/pypot-snap-blocks.xml snap/libraries/poppy.xml
         echo -e "poppy.xml\tPoppy robots" >> snap/libraries/LIBRARIES
 
+        # Delete snap default examples
+        rm snap/Examples/EXAMPLES
+        
+        # Link pypot Snap projets to Snap! Examples folder
         for project in $pypot_root/server/snap_projects/*.xml; do
             ln -s $project snap/Examples/
 
             filename=$(basename "$project")
-            echo -e "$filename\tPoppy robots" > snap/Examples/EXAMPLES
+            echo -e "$filename\tPoppy robots" >> snap/Examples/EXAMPLES
         done
 
         wget https://github.com/poppy-project/poppy-monitor/archive/master.zip -O master.zip
