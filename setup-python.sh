@@ -45,7 +45,7 @@ EOF
   JUPYTER_CUSTOM_JS_FILE=$HOME/.jupyter/jupyter_notebook_config.py
   mkdir -p "$HOME/.jupyter/custom"
   cat >> "$JUPYTER_CUSTOM_JS_FILE" << EOF
-# Allow new tab to be openned in an iframe
+/* Allow new tab to be openned in an iframe */
 define(['base/js/namespace'], function(Jupyter){
   Jupyter._target = '_self';
 })
