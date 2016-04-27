@@ -36,7 +36,19 @@ configure_jupyter()
 c.NotebookApp.ip = '*'
 c.NotebookApp.open_browser = False
 c.NotebookApp.notebook_dir = '$JUPTER_NOTEBOOK_FOLDER'
+c.NotebookApp.tornado_settings = { 'headers': { 'Content-Security-Policy': "frame-ancestors 'self' *" } }
+c.NotebookApp.allow_origin = '*'
+c.NotebookApp.extra_static_paths = ["static/custom/custom.js"]
 # --- Poppy configuration ---
+EOF
+
+  JUPYTER_CUSTOM_JS_FILE=$HOME/.jupyter/jupyter_notebook_config.py
+  mkdir -p "$HOME/.jupyter/custom"
+  cat >> "$JUPYTER_CUSTOM_JS_FILE" << EOF
+# Allow new tab to be openned in an iframe
+define(['base/js/namespace'], function(Jupyter){
+  Jupyter._target = '_self';
+})
 EOF
 
     python -c """
