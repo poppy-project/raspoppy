@@ -110,7 +110,7 @@ iptables -t mangle -F
 iptables -X
 
 # Perform the rewriting magic.
-iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to 5000
+iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to 2280
 EOF
     chmod +x firewall
     sudo chown root:root firewall
