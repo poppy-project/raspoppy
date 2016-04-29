@@ -147,9 +147,10 @@ EOF
 
 set_logo()
 {
-    wget https://raw.githubusercontent.com/poppy-project/raspoppy/master/poppy_logo -O ~/poppy_logo
+    wget https://raw.githubusercontent.com/poppy-project/raspoppy/master/poppy_logo -O $HOME/.poppy_logo
+    # Remove old occurences of poppy_logo in .bashrc
     sed -i /poppy_logo/d $HOME/.bashrc
-    echo cat $HOME/poppy_logo >> $HOME/.bashrc
+    echo cat $HOME/.poppy_logo >> $HOME/.bashrc
 }
 
 install_poppy_libraries
