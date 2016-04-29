@@ -147,9 +147,9 @@ EOF
 
 set_logo()
 {
-    wget -P  /home https://raw.githubusercontent.com/poppy-project/raspoppy/master/poppy_logo
-    sed -i /poppy_logo/d /home/poppy/.bashrc
-    echo cat /home/poppy_logo >> /home/poppy/.bashrc
+    wget https://raw.githubusercontent.com/poppy-project/raspoppy/master/poppy_logo -O ~/poppy_logo
+    sed -i /poppy_logo/d $HOME/.bashrc
+    echo cat $HOME/poppy_logo >> $HOME/.bashrc
 }
 
 install_poppy_libraries
