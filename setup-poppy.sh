@@ -45,7 +45,7 @@ install_snap()
 
         # Delete snap default examples
         rm snap/Examples/EXAMPLES
-        
+
         # Link pypot Snap projets to Snap! Examples folder
         for project in $pypot_root/server/snap_projects/*.xml; do
             ln -s $project snap/Examples/
@@ -145,9 +145,17 @@ EOF
     mv poppy-update $HOME/miniconda/bin/
 }
 
+set_logo()
+{
+    wget -P  /home https://raw.githubusercontent.com/poppy-project/raspoppy/master/poppy_logo
+    sed -i /poppy_logo/d /home/poppy/.bashrc
+    echo cat /home/poppy_logo >> /home/poppy/.bashrc
+}
+
 install_poppy_libraries
 install_notebooks
 setup_puppet_master
 autostartup_webinterface
 redirect_port80_webinterface
 setup_update
+set_logo
