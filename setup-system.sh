@@ -46,7 +46,7 @@ install_additional_packages()
     sudo apt-get update
 
     # Used for being able to change hostname without reboot
-    sudo apt-get install -y network-manager
+    sudo apt-get install -y network-manager git
 }
 
 install_custom_raspiconfig
