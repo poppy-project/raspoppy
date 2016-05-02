@@ -5,6 +5,8 @@ hostname=$2
 
 export PATH="$HOME/miniconda/bin:$PATH"
 
+POPPY_ROOT="$HOME/dev"
+
 install_poppy_libraries()
 {
     conda install $creature
@@ -17,17 +19,18 @@ install_notebooks()
 
 setup_puppet_master()
 {
-    cd || exit
-    wget https://github.com/poppy-project/puppet-master/archive/master.zip
-    unzip master.zip
-    rm master.zip
-    mv puppet-master-master puppet-master
+    pushd "$POPPY_ROOT"
+        wget https://github.com/poppy-project/puppet-master/archive/master.zip
+        unzip master.zip
+        rm master.zip
+        mv puppet-master-master puppet-master
 
-    pushd puppet-master
-        conda install flask pyyaml requests
+        pushd puppet-master
+            conda install flask pyyaml requests
 
-        python bootstrap.py $hostname $creature
-        install_snap "$(pwd)"
+            python bootstrap.py $hostname $creature
+            install_snap "$(pwd)"
+        popd
     popd
 }
 
@@ -71,7 +74,7 @@ Description=Puppet Master service
 
 [Service]
 Type=simple
-ExecStart=$HOME/puppet-master/start-pwid &
+ExecStart=$POPPY_ROOT/puppet-master/start-pwid &
 
 [Install]
 WantedBy=multi-user.target
@@ -79,18 +82,18 @@ EOF
 
     sudo mv puppet-master.service /lib/systemd/system/puppet-master.service
 
-    cat >> $HOME/puppet-master/start-pwid << EOF
+    cat > $POPPY_ROOT/puppet-master/start-pwid << EOF
 #!/bin/bash
-su - $(whoami) -c "bash $HOME/puppet-master/launch.sh"
+su - $(whoami) -c "bash $POPPY_ROOT/puppet-master/launch.sh"
 EOF
 
-    cat >> $HOME/puppet-master/launch.sh << 'EOF'
 export PATH=$HOME/miniconda/bin:$PATH
-pushd $HOME/puppet-master
+    cat > $POPPY_ROOT/puppet-master/launch.sh << 'EOF'
+pushd $POPPY_ROOT/puppet-master
     python bouteillederouge.py 1>&2 2> /tmp/bouteillederouge.log
 popd
 EOF
-    chmod +x $HOME/puppet-master/launch.sh $HOME/puppet-master/start-pwid
+    chmod +x $POPPY_ROOT/puppet-master/launch.sh $POPPY_ROOT/puppet-master/start-pwid
 
     sudo systemctl daemon-reload
     sudo systemctl enable puppet-master.service
