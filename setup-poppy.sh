@@ -148,6 +148,30 @@ EOF
     mv poppy-update $HOME/miniconda/bin/
 }
 
+populate_notebooks()
+{
+  pushd $HOME/notebooks
+
+      if [ "$creature" == "poppy-humanoid" ]; then
+          curl -o Demo_interface.ipynb https://raw.githubusercontent.com/poppy-project/poppy-humanoid/master/software/samples/notebooks/Demo%20Interface.ipynb
+      fi
+      if [ "$creature" == "poppy-ergo-jr" ]; then
+          curl -o Quickstart_ergo.ipynb https://raw.githubusercontent.com/poppy-project/pypot/master/samples/notebooks/QuickStart%20playing%20with%20a%20PoppyErgo.ipynb
+      fi
+
+      # Download community notebooks
+      wget https://github.com/poppy-project/community-notebooks/archive/master.zip -O master.zip
+      unzip master.zip
+      mv community-notebooks-master community-notebooks
+      rm master.zip
+
+      # Copy the documentation pdf
+      wget https://www.gitbook.com/download/pdf/book/poppy-project/poppy-docs?lang=en -O documentation.pdf
+
+
+  popd
+}
+
 set_logo()
 {
     wget https://raw.githubusercontent.com/poppy-project/raspoppy/master/poppy_logo -O $HOME/.poppy_logo
@@ -162,4 +186,5 @@ setup_puppet_master
 autostartup_webinterface
 redirect_port80_webinterface
 setup_update
+#populate_notebooks
 set_logo
