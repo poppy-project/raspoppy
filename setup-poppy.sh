@@ -5,20 +5,56 @@ hostname=$2
 
 export PATH="$HOME/miniconda/bin:$PATH"
 
-POPPY_ROOT="$HOME/dev"
-
 install_poppy_libraries()
 {
     conda install $creature
+
+
+    if [ -z ${POPPY_ROOT+x} ]; then
+        POPPY_ROOT="$HOME/dev"
+    fi
+    mkdir -p "$POPPY_ROOT"
+
+    # Symlink Poppy Python packages to allow more easily to users to view and modify the code
+    for repo in pypot $creature ; do
+        # Replace - to _ (I don't like regex)
+        module=`python -c 'str = "'$repo'" ; print str.replace("-","_")'`
+
+        module_path=`python -c 'import '$module', os; print os.path.dirname('$module'.__file__)'`
+        ln -s "$module_path" "$POPPY_ROOT"
+    done
 }
 
-install_notebooks()
+populate_notebooks()
 {
-    echo "nothing to do here..."
+    if [ -z ${JUPTER_NOTEBOOK_FOLDER+x} ]; then
+        JUPTER_NOTEBOOK_FOLDER="$HOME/notebooks"
+    fi
+    mkdir -p "$JUPTER_NOTEBOOK_FOLDER"
+
+    pushd $JUPTER_NOTEBOOK_FOLDER
+
+        if [ "$creature" == "poppy-humanoid" ]; then
+          curl -o Demo_interface.ipynb https://raw.githubusercontent.com/poppy-project/poppy-humanoid/master/software/samples/notebooks/Demo%20Interface.ipynb
+        fi
+        if [ "$creature" == "poppy-ergo-jr" ]; then
+          curl -o Quickstart_ergo.ipynb https://raw.githubusercontent.com/poppy-project/pypot/master/samples/notebooks/QuickStart%20playing%20with%20a%20PoppyErgo.ipynb
+        fi
+
+        # Download community notebooks
+        wget https://github.com/poppy-project/community-notebooks/archive/master.zip -O master.zip
+        unzip master.zip
+        mv community-notebooks-master community-notebooks
+        rm master.zip
+
+        # Copy the documentation pdf
+        wget https://www.gitbook.com/download/pdf/book/poppy-project/poppy-docs?lang=en -O documentation.pdf
+    popd
 }
 
 setup_puppet_master()
 {
+
     pushd "$POPPY_ROOT"
         wget https://github.com/poppy-project/puppet-master/archive/master.zip
         unzip master.zip
@@ -68,7 +104,11 @@ autostartup_webinterface()
 {
     cd || exit
 
-    cat >> puppet-master.service << EOF
+    if [ -z ${POPPY_ROOT+x} ]; then
+        POPPY_ROOT="$HOME/dev"
+    fi
+
+    cat > puppet-master.service << EOF
 [Unit]
 Description=Puppet Master service
 
@@ -88,7 +128,7 @@ su - $(whoami) -c "bash $POPPY_ROOT/puppet-master/launch.sh"
 EOF
 
 export PATH=$HOME/miniconda/bin:$PATH
-    cat > $POPPY_ROOT/puppet-master/launch.sh << 'EOF'
+    cat > $POPPY_ROOT/puppet-master/launch.sh << EOF
 pushd $POPPY_ROOT/puppet-master
     python bouteillederouge.py 1>&2 2> /tmp/bouteillederouge.log
 popd
@@ -101,10 +141,10 @@ EOF
 
 redirect_port80_webinterface()
 {
-    cat >> firewall << EOF
+    cat > firewall << EOF
 #!/bin/sh
 
-PATH=/sbin:/bin:/usr/sbin:/usr/bin
+PATH=/sbin:/bin:/usr/sbin:/usr/binN
 
 # Flush any existing firewall rules we might have
 iptables -F
@@ -125,7 +165,7 @@ setup_update()
     cd || exit
     wget https://raw.githubusercontent.com/poppy-project/raspoppy/master/poppy-update.sh -O ~/.poppy-update.sh
 
-    cat >> poppy-update << EOF
+    cat > poppy-update << EOF
 #!/usr/bin/env python
 
 import os
@@ -157,8 +197,8 @@ install_git_lfs()
         return
     fi
 
-
     # Install go 1.6 for ARMv6 (works also on ARMv7 & ARMv8)
+    sudo apt-get --yes --force-yes install git
     mkdir -p $POPPY_ROOT/go
     pushd "$POPPY_ROOT/go"
         wget https://storage.googleapis.com/golang/go1.6.2.linux-armv6l.tar.gz -O go.tar.gz
@@ -184,29 +224,6 @@ install_git_lfs()
     set +e
 }
 
-populate_notebooks()
-{
-  pushd $HOME/notebooks
-
-      if [ "$creature" == "poppy-humanoid" ]; then
-          curl -o Demo_interface.ipynb https://raw.githubusercontent.com/poppy-project/poppy-humanoid/master/software/samples/notebooks/Demo%20Interface.ipynb
-      fi
-      if [ "$creature" == "poppy-ergo-jr" ]; then
-          curl -o Quickstart_ergo.ipynb https://raw.githubusercontent.com/poppy-project/pypot/master/samples/notebooks/QuickStart%20playing%20with%20a%20PoppyErgo.ipynb
-      fi
-
-      # Download community notebooks
-      wget https://github.com/poppy-project/community-notebooks/archive/master.zip -O master.zip
-      unzip master.zip
-      mv community-notebooks-master community-notebooks
-      rm master.zip
-
-      # Copy the documentation pdf
-      wget https://www.gitbook.com/download/pdf/book/poppy-project/poppy-docs?lang=en -O documentation.pdf
-
-
-  popd
-}
 
 set_logo()
 {
@@ -217,11 +234,10 @@ set_logo()
 }
 
 install_poppy_libraries
-install_notebooks
+populate_notebooks
 setup_puppet_master
 autostartup_webinterface
 redirect_port80_webinterface
 setup_update
-#install_git_lfs
-#populate_notebooks
+install_git_lfs
 set_logo

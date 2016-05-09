@@ -3,7 +3,7 @@
 install_conda()
 {
     cd || exit
-    wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-armv7l.sh
+    wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-armv7l.sh -O Miniconda-latest-Linux-armv7l.sh
     bash Miniconda-latest-Linux-armv7l.sh -b
     rm Miniconda-latest-Linux-armv7l.sh
 
@@ -25,13 +25,13 @@ install_python_packages()
 configure_jupyter()
 {
     JUPYTER_CONFIG_FILE=$HOME/.jupyter/jupyter_notebook_config.py
-    JUPTER_NOTEBOOK_FOLDER=$HOME/notebooks
+    export JUPTER_NOTEBOOK_FOLDER=$HOME/notebooks
 
-    mkdir $JUPTER_NOTEBOOK_FOLDER
+    mkdir -p $JUPTER_NOTEBOOK_FOLDER
 
-    jupyter notebook --generate-config
+    yes | jupyter notebook --generate-config
 
-    cat >>$JUPYTER_CONFIG_FILE << EOF
+    cat >> $JUPYTER_CONFIG_FILE << EOF
 # --- Poppy configuration ---
 c.NotebookApp.ip = '*'
 c.NotebookApp.open_browser = False
@@ -62,6 +62,7 @@ if not os.path.exists(d):
 """
 
     pip install https://github.com/ipython-contrib/IPython-notebook-extensions/archive/master.zip --user
+    jupyter nbextension enable --py widgetsnbextension
 }
 
 autostart_jupyter()
@@ -81,12 +82,12 @@ EOF
 
     sudo mv jupyter.service /lib/systemd/system/jupyter.service
 
-    cat >> $HOME/.jupyter/launch.sh << 'EOF'
+    cat > $HOME/.jupyter/launch.sh << 'EOF'
 export PATH=$HOME/miniconda/bin:$PATH
 jupyter notebook
 EOF
 
-    cat >> $HOME/.jupyter/start-daemon << EOF
+    cat > $HOME/.jupyter/start-daemon << EOF
 #!/bin/bash
 su - $(whoami) -c "bash $HOME/.jupyter/launch.sh"
 EOF
