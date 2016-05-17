@@ -155,7 +155,7 @@ redirect_port80_webinterface()
     cat > firewall << EOF
 #!/bin/sh
 
-PATH=/sbin:/bin:/usr/sbin:/usr/binN
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
 
 # Flush any existing firewall rules we might have
 iptables -F
