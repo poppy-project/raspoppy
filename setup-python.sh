@@ -61,8 +61,7 @@ if not os.path.exists(d):
     os.makedirs(d)
 """
 
-    pip install https://github.com/ipython-contrib/IPython-notebook-extensions/archive/master.zip --user
-    jupyter nbextension enable --py widgetsnbextension
+    pip install https://github.com/ipython-contrib/IPython-notebook-extensions/archive/master.zip
 }
 
 autostart_jupyter()

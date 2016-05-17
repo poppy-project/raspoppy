@@ -11,7 +11,8 @@ install_poppy_libraries()
 
 
     if [ -z ${POPPY_ROOT+x} ]; then
-        POPPY_ROOT="$HOME/dev"
+        export POPPY_ROOT="$HOME/dev"
+        echo 'export POPPY_ROOT="$HOME/dev" >> ~/.bashrc'
     fi
     mkdir -p "$POPPY_ROOT"
 
@@ -35,10 +36,13 @@ populate_notebooks()
     pushd $JUPTER_NOTEBOOK_FOLDER
 
         if [ "$creature" == "poppy-humanoid" ]; then
-          curl -o Demo_interface.ipynb https://raw.githubusercontent.com/poppy-project/poppy-humanoid/master/software/samples/notebooks/Demo%20Interface.ipynb
+            curl -o Demo_interface.ipynb https://raw.githubusercontent.com/poppy-project/poppy-humanoid/master/software/samples/notebooks/Demo%20Interface.ipynb
         fi
         if [ "$creature" == "poppy-ergo-jr" ]; then
-          curl -o Quickstart_ergo.ipynb https://raw.githubusercontent.com/poppy-project/pypot/master/samples/notebooks/QuickStart%20playing%20with%20a%20PoppyErgo.ipynb
+            # Todo change to master branch when 1.0.0.rc3 will be merged
+            curl -o "Discover your Poppy Ergo Jr.ipynb" https://github.com/poppy-project/poppy-ergo-jr/blob/v1.0.0-rc3/software/samples/notebooks/Discover%20your%20Poppy%20Ergo%20Jr.ipynb
+            curl -o "Record, save and play moves on Poppy Ergo Jr.ipynb" https://github.com/poppy-project/poppy-ergo-jr/blob/v1.0.0-rc3/software/samples/notebooks/Record%2C%20Save%20and%20Play%20Moves%20on%20Poppy%20Ergo%20Jr.ipynb
+            curl -o Quickstart_ergo.ipynb https://raw.githubusercontent.com/poppy-project/pypot/master/samples/notebooks/QuickStart%20playing%20with%20a%20PoppyErgo.ipynb
         fi
 
         # Download community notebooks
@@ -54,6 +58,10 @@ populate_notebooks()
 
 setup_puppet_master()
 {
+    if [ -z ${POPPY_ROOT+x} ]; then
+        export POPPY_ROOT="$HOME/dev"
+        mkdir -p $POPPY_ROOT
+    fi
 
     pushd "$POPPY_ROOT"
         wget https://github.com/poppy-project/puppet-master/archive/master.zip
@@ -105,7 +113,9 @@ autostartup_webinterface()
     cd || exit
 
     if [ -z ${POPPY_ROOT+x} ]; then
-        POPPY_ROOT="$HOME/dev"
+        export POPPY_ROOT="$HOME/dev"
+        mkdir -p $POPPY_ROOT
+
     fi
 
     cat > puppet-master.service << EOF
@@ -129,6 +139,8 @@ EOF
 
 export PATH=$HOME/miniconda/bin:$PATH
     cat > $POPPY_ROOT/puppet-master/launch.sh << EOF
+export PATH=$HOME/miniconda/bin:$PATH
+
 pushd $POPPY_ROOT/puppet-master
     python bouteillederouge.py 1>&2 2> /tmp/bouteillederouge.log
 popd
@@ -236,6 +248,7 @@ set_logo()
 install_poppy_libraries
 populate_notebooks
 setup_puppet_master
+install_snap
 autostartup_webinterface
 redirect_port80_webinterface
 setup_update
