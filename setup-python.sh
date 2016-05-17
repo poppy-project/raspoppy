@@ -96,7 +96,6 @@ EOF
     sudo systemctl enable jupyter.service
 }
 
-
 install_conda
 install_python_packages
 configure_jupyter
