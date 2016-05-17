@@ -96,25 +96,6 @@ EOF
     sudo systemctl enable jupyter.service
 }
 
- autostart_zeroconf_poppy_publisher()
- {
-    cat >> poppy-publisher.service << EOF
-[Unit]
-Description=Poppy Zeroconf publisher
-
-[Service]
-Type=simple
-ExecStart=/usr/bin/avahi-publish -s $HOSTNAME _poppy_robot._tcp 9 http://poppy-project.org &
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-    sudo mv poppy-publisher.service /lib/systemd/system/poppy-publisher.service
-    sudo systemctl daemon-reload
-    sudo systemctl enable poppy-publisher.service
-     
- }
 
 install_conda
 install_python_packages

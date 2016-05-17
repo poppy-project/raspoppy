@@ -137,7 +137,6 @@ EOF
 su - $(whoami) -c "bash $POPPY_ROOT/puppet-master/launch.sh"
 EOF
 
-export PATH=$HOME/miniconda/bin:$PATH
     cat > $POPPY_ROOT/puppet-master/launch.sh << EOF
 export PATH=$HOME/miniconda/bin:$PATH
 

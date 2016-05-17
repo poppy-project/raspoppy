@@ -46,10 +46,37 @@ install_additional_packages()
     sudo apt-get update
 
     # Used for being able to change hostname without reboot
-    sudo apt-get install -y network-manager git
+    sudo apt-get install -y --force-yes network-manager 
+
+    sudo apt-get install -y --force-yes git
+
+    # Allow direct ethernet connection without router or network sharing -> IP4LL protocol
+    sudo apt-get install -y --force-yes avahi-autoipd avahi-daemon
+}
+
+
+autostart_zeroconf_poppy_publisher()
+{
+    cat > poppy-publisher.service << EOF
+[Unit]
+Description=Poppy Zeroconf publisher
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/avahi-publish -s $HOSTNAME _poppy_robot._tcp 9 &
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+    sudo mv poppy-publisher.service /lib/systemd/system/poppy-publisher.service
+    sudo systemctl daemon-reload
+    sudo systemctl enable poppy-publisher.service
+     
 }
 
 install_custom_raspiconfig
 setup_user $username $password
 install_additional_packages
 system_setup
+autostart_zeroconf_poppy_publisher
