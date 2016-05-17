@@ -53,6 +53,8 @@ populate_notebooks()
 
         # Copy the documentation pdf
         wget https://www.gitbook.com/download/pdf/book/poppy-project/poppy-docs?lang=en -O documentation.pdf
+
+        ln -s $POPPY_ROOT poppy_src
     popd
 }
 
