@@ -8,26 +8,73 @@ export PATH="$HOME/miniconda/bin:$PATH"
 install_poppy_libraries()
 {
     conda install $creature
+
+
+    if [ -z ${POPPY_ROOT+x} ]; then
+        export POPPY_ROOT="$HOME/dev"
+        echo 'export POPPY_ROOT="$HOME/dev" >> ~/.bashrc'
+    fi
+    mkdir -p "$POPPY_ROOT"
+
+    # Symlink Poppy Python packages to allow more easily to users to view and modify the code
+    for repo in pypot $creature ; do
+        # Replace - to _ (I don't like regex)
+        module=`python -c 'str = "'$repo'" ; print str.replace("-","_")'`
+
+        module_path=`python -c 'import '$module', os; print os.path.dirname('$module'.__file__)'`
+        ln -s "$module_path" "$POPPY_ROOT"
+    done
 }
 
-install_notebooks()
+populate_notebooks()
 {
-    echo "nothing to do here..."
+    if [ -z ${JUPTER_NOTEBOOK_FOLDER+x} ]; then
+        JUPTER_NOTEBOOK_FOLDER="$HOME/notebooks"
+    fi
+    mkdir -p "$JUPTER_NOTEBOOK_FOLDER"
+
+    pushd $JUPTER_NOTEBOOK_FOLDER
+
+        if [ "$creature" == "poppy-humanoid" ]; then
+            curl -o Demo_interface.ipynb https://raw.githubusercontent.com/poppy-project/poppy-humanoid/master/software/samples/notebooks/Demo%20Interface.ipynb
+        fi
+        if [ "$creature" == "poppy-ergo-jr" ]; then
+            # Todo change to master branch when 1.0.0.rc3 will be merged
+            curl -o "Discover your Poppy Ergo Jr.ipynb" https://github.com/poppy-project/poppy-ergo-jr/blob/v1.0.0-rc3/software/samples/notebooks/Discover%20your%20Poppy%20Ergo%20Jr.ipynb
+            curl -o "Record, save and play moves on Poppy Ergo Jr.ipynb" https://github.com/poppy-project/poppy-ergo-jr/blob/v1.0.0-rc3/software/samples/notebooks/Record%2C%20Save%20and%20Play%20Moves%20on%20Poppy%20Ergo%20Jr.ipynb
+            curl -o Quickstart_ergo.ipynb https://raw.githubusercontent.com/poppy-project/pypot/master/samples/notebooks/QuickStart%20playing%20with%20a%20PoppyErgo.ipynb
+        fi
+
+        # Download community notebooks
+        wget https://github.com/poppy-project/community-notebooks/archive/master.zip -O master.zip
+        unzip master.zip
+        mv community-notebooks-master community-notebooks
+        rm master.zip
+
+        # Copy the documentation pdf
+        wget https://www.gitbook.com/download/pdf/book/poppy-project/poppy-docs?lang=en -O documentation.pdf
+    popd
 }
 
 setup_puppet_master()
 {
-    cd || exit
-    wget https://github.com/poppy-project/puppet-master/archive/master.zip
-    unzip master.zip
-    rm master.zip
-    mv puppet-master-master puppet-master
+    if [ -z ${POPPY_ROOT+x} ]; then
+        export POPPY_ROOT="$HOME/dev"
+        mkdir -p $POPPY_ROOT
+    fi
 
-    pushd puppet-master
-        conda install flask pyyaml requests
+    pushd "$POPPY_ROOT"
+        wget https://github.com/poppy-project/puppet-master/archive/master.zip
+        unzip master.zip
+        rm master.zip
+        mv puppet-master-master puppet-master
 
-        python bootstrap.py $hostname $creature
-        install_snap "$(pwd)"
+        pushd puppet-master
+            conda install flask pyyaml requests
+
+            python bootstrap.py $hostname $creature
+            install_snap "$(pwd)"
+        popd
     popd
 }
 
@@ -65,13 +112,19 @@ autostartup_webinterface()
 {
     cd || exit
 
-    cat >> puppet-master.service << EOF
+    if [ -z ${POPPY_ROOT+x} ]; then
+        export POPPY_ROOT="$HOME/dev"
+        mkdir -p $POPPY_ROOT
+
+    fi
+
+    cat > puppet-master.service << EOF
 [Unit]
 Description=Puppet Master service
 
 [Service]
 Type=simple
-ExecStart=$HOME/puppet-master/start-pwid &
+ExecStart=$POPPY_ROOT/puppet-master/start-pwid &
 
 [Install]
 WantedBy=multi-user.target
@@ -79,18 +132,19 @@ EOF
 
     sudo mv puppet-master.service /lib/systemd/system/puppet-master.service
 
-    cat >> $HOME/puppet-master/start-pwid << EOF
+    cat > $POPPY_ROOT/puppet-master/start-pwid << EOF
 #!/bin/bash
-su - $(whoami) -c "bash $HOME/puppet-master/launch.sh"
+su - $(whoami) -c "bash $POPPY_ROOT/puppet-master/launch.sh"
 EOF
 
-    cat >> $HOME/puppet-master/launch.sh << 'EOF'
+    cat > $POPPY_ROOT/puppet-master/launch.sh << EOF
 export PATH=$HOME/miniconda/bin:$PATH
-pushd $HOME/puppet-master
+
+pushd $POPPY_ROOT/puppet-master
     python bouteillederouge.py 1>&2 2> /tmp/bouteillederouge.log
 popd
 EOF
-    chmod +x $HOME/puppet-master/launch.sh $HOME/puppet-master/start-pwid
+    chmod +x $POPPY_ROOT/puppet-master/launch.sh $POPPY_ROOT/puppet-master/start-pwid
 
     sudo systemctl daemon-reload
     sudo systemctl enable puppet-master.service
@@ -98,7 +152,7 @@ EOF
 
 redirect_port80_webinterface()
 {
-    cat >> firewall << EOF
+    cat > firewall << EOF
 #!/bin/sh
 
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
@@ -122,7 +176,7 @@ setup_update()
     cd || exit
     wget https://raw.githubusercontent.com/poppy-project/raspoppy/master/poppy-update.sh -O ~/.poppy-update.sh
 
-    cat >> poppy-update << EOF
+    cat > poppy-update << EOF
 #!/usr/bin/env python
 
 import os
@@ -145,6 +199,43 @@ EOF
     mv poppy-update $HOME/miniconda/bin/
 }
 
+install_git_lfs()
+{
+    set -e
+    # Get out if git-lfs is already installed
+    if $(git-lfs &> /dev/null); then
+        echo "git-lfs is already installed"
+        return
+    fi
+
+    # Install go 1.6 for ARMv6 (works also on ARMv7 & ARMv8)
+    sudo apt-get --yes --force-yes install git
+    mkdir -p $POPPY_ROOT/go
+    pushd "$POPPY_ROOT/go"
+        wget https://storage.googleapis.com/golang/go1.6.2.linux-armv6l.tar.gz -O go.tar.gz
+        sudo tar -C /usr/local -xzf go.tar.gz
+        rm go.tar.gz
+        export PATH=$PATH:/usr/local/go/bin
+        export GOPATH=$PWD
+        echo "PATH=$PATH:/usr/local/go/bin" >> $HOME/.bashrc
+        echo "GOPATH=$PWD" >> $HOME/.bashrc
+
+        # Download and compile git-lfs
+        mkdir -p src/github.com/github
+        pushd src/github.com/github
+            git clone https://github.com/github/git-lfs
+            pushd git-lfs
+              script/bootstrap
+              sudo cp bin/git-lfs /usr/bin/
+            popd
+        popd
+    popd
+    hash -r
+    git lfs install
+    set +e
+}
+
+
 set_logo()
 {
     wget https://raw.githubusercontent.com/poppy-project/raspoppy/master/poppy_logo -O $HOME/.poppy_logo
@@ -154,9 +245,11 @@ set_logo()
 }
 
 install_poppy_libraries
-install_notebooks
+populate_notebooks
 setup_puppet_master
+install_snap
 autostartup_webinterface
 redirect_port80_webinterface
 setup_update
+install_git_lfs
 set_logo
