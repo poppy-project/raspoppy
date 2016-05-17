@@ -44,6 +44,8 @@ populate_notebooks()
             curl -o Quickstart_ergo.ipynb https://raw.githubusercontent.com/poppy-project/pypot/master/samples/notebooks/QuickStart%20playing%20with%20a%20PoppyErgo.ipynb
         fi
 
+        curl -o "Benchmark your Poppy robot.ipynb" https://raw.githubusercontent.com/poppy-project/pypot/master/samples/notebooks/Benchmark%20your%20Poppy%20robot.ipynb
+
         # Download community notebooks
         wget https://github.com/poppy-project/community-notebooks/archive/master.zip -O master.zip
         unzip master.zip
