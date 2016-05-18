@@ -106,7 +106,7 @@ install_snap()
             cp $project $snap_local_folder/
             ln -s $snap_local_folder/$filename snap/Examples/
 
-            echo -e "$filename\tPoppy robots" >> snap/Examples/EXAMPLES
+            echo -e "$filename\t$filename" >> snap/Examples/EXAMPLES
         done
 
 
