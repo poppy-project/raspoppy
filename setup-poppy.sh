@@ -80,6 +80,7 @@ setup_puppet_master()
     popd
 }
 
+# Called from setup_puppet_master()
 install_snap()
 {
     pushd $1
@@ -89,19 +90,29 @@ install_snap()
         mv Snap--Build-Your-Own-Blocks-master snap
 
         pypot_root=$(python -c "import pypot, os; print(os.path.dirname(pypot.__file__))")
-        ln -s $pypot_root/server/snap_projects/pypot-snap-blocks.xml snap/libraries/poppy.xml
-        echo -e "poppy.xml\tPoppy robots" >> snap/libraries/LIBRARIES
 
         # Delete snap default examples
         rm snap/Examples/EXAMPLES
+        
+        # Snap projects are dynamicaly modified and copied on a local folder for acces rights issues
+        # This snap_local_folder is defined depending the OS in pypot.server.snap.get_snap_user_projects_directory()
+        snap_local_folder="$HOME/.local/share/pypot"
+        mkdir -p "$snap_local_folder"
 
         # Link pypot Snap projets to Snap! Examples folder
         for project in $pypot_root/server/snap_projects/*.xml; do
-            ln -s $project snap/Examples/
-
+            # Local file doesn"t exist yet if SnapRobotServer has not been started
             filename=$(basename "$project")
+            cp $project $snap_local_folder/
+            ln -s $snap_local_folder/$filename snap/Examples/
+
             echo -e "$filename\tPoppy robots" >> snap/Examples/EXAMPLES
         done
+
+
+        ln -s $snap_local_folder/pypot-snap-blocks.xml snap/libraries/poppy.xml
+        echo -e "poppy.xml\tPoppy robots" >> snap/libraries/LIBRARIES
+
 
         wget https://github.com/poppy-project/poppy-monitor/archive/master.zip -O master.zip
         unzip master.zip
@@ -213,7 +224,6 @@ set_logo()
 install_poppy_libraries
 populate_notebooks
 setup_puppet_master
-install_snap
 autostartup_webinterface
 redirect_port80_webinterface
 setup_update
