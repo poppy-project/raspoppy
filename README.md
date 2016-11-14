@@ -1,11 +1,11 @@
 
-# Raspoppy: Utility tools to setup a RaspberryPi-2 for Poppy robots
+# Raspoppy: Utility tools to setup a Raspberry Pi for Poppy robots
 
 This repository regroups the set of tools we use to setup a Raspberry board for a Poppy robot.
 
 While we try to keep this procedure as simple as possible, it still requires a good knowledge of Linux OS and of Python. For those who are not interested in digging into those details, we provide ready-to-use SD-card images which  can be directly downloaded and copy into your Raspberry.
 
-*While this procedure is mainly designed for the Raspberypi-2, some parts (especially all conda recipes) should also work for the odroid XU4 as both boards used an armv7 CPU. It is important to also note that this procedure is only given as an example: i.e. this is how we build the SD-card images we provide. Yet, you can freely adapt to better match your needs.*
+*While this procedure is mainly designed for the Raspberry Pi 2 and 3, some parts (especially all conda recipes) should also work for the odroid XU4 as both boards used an armv7 CPU. It is important to also note that this procedure is only given as an example: i.e. this is how we build the SD-card images we provide. Yet, you can freely adapt to better match your needs.*
 
 ## Current SD card ISO version: 1.0
 
