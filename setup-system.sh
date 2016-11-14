@@ -39,6 +39,10 @@ system_setup()
     echo -e "\e[33mSetup serial communication.\e[0m"
     sudo raspi-config --disable-serial-log
     sudo su -c "echo \"init_uart_clock=16000000\" >> /boot/config.txt"
+    sudo su -c "echo \"enable_uart=1\" >> /boot/config.txt" 
+    sudo su -c "echo \"dtoverlay=pi3-miniuart-bt\" >> /boot/config.txt" 
+    
+    
 }
 
 install_additional_packages()
