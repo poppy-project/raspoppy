@@ -74,7 +74,7 @@ setup_network_tools()
     (echo "poppy"; echo "poppy") | sudo smbpasswd -s -a poppy
 
     # avahi services
-    sudo cat <<EOF >> /etc/avahi/services/ssh.service
+    sudo tee /etc/avahi/services/ssh.service <<EOF
 <?xml version="1.0" standalone='no'?>
 <!DOCTYPE service-group SYSTEM "avahi-service.dtd">
 <service-group>
@@ -90,7 +90,7 @@ setup_network_tools()
 </service-group>
 EOF
 
-    sudo cat <<EOF >> /etc/avahi/services/poppy.service
+    sudo tee /etc/avahi/services/poppy.service <<EOF
 <?xml version="1.0" standalone='no'?>
 <!DOCTYPE service-group SYSTEM "avahi-service.dtd">
 <service-group>
