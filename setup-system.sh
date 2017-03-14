@@ -32,6 +32,12 @@ setup_user()
 
 system_setup()
 {
+    # Add more langs (GB, US, FR)
+    sudo sed -i 's/^#\s*\(en_GB.UTF-8 UTF-8\)/\1/g' /etc/locale.gen
+    sudo sed -i 's/^#\s*\(en_US.UTF-8 UTF-8\)/\1/g' /etc/locale.gen
+    sudo sed -i 's/^#\s*\(fr_FR.UTF-8 UTF-8\)/\1/g' /etc/locale.gen
+    sudo locale-gen
+
     echo -e "\e[33mEnable camera.\e[0m"
     sudo raspi-config --enable-camera
     echo "bcm2835-v4l2" | sudo tee -a /etc/modules
@@ -39,10 +45,8 @@ system_setup()
     echo -e "\e[33mSetup serial communication.\e[0m"
     sudo raspi-config --disable-serial-log
     sudo su -c "echo \"init_uart_clock=16000000\" >> /boot/config.txt"
-    sudo su -c "echo \"enable_uart=1\" >> /boot/config.txt" 
-    sudo su -c "echo \"dtoverlay=pi3-miniuart-bt\" >> /boot/config.txt" 
-    
-    
+    sudo su -c "echo \"enable_uart=1\" >> /boot/config.txt"
+    sudo su -c "echo \"dtoverlay=pi3-miniuart-bt\" >> /boot/config.txt"
 }
 
 install_additional_packages()
@@ -50,7 +54,7 @@ install_additional_packages()
     sudo apt-get update
 
     # Used for being able to change hostname without reboot
-    sudo apt-get install -y --force-yes network-manager 
+    sudo apt-get install -y --force-yes network-manager
 
     sudo apt-get install -y --force-yes git
 
@@ -76,7 +80,6 @@ EOF
     sudo mv poppy-publisher.service /lib/systemd/system/poppy-publisher.service
     sudo systemctl daemon-reload
     sudo systemctl enable poppy-publisher.service
-     
 }
 
 install_git_lfs()
