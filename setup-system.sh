@@ -27,7 +27,7 @@ setup_user()
     G=`echo ${G} | sed 's/ /,/g'`
     sudo usermod -a -G $G $username
 
-    echo "$username ALL=(ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers
+    echo "$username ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/011_poppy-nopasswd
 }
 
 system_setup()
