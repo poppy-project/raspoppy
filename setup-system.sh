@@ -55,33 +55,60 @@ install_additional_packages()
 {
     sudo apt-get update
 
+    sudo apt-get install build-essential unzip
+
     # Used for being able to change hostname without reboot
     sudo apt-get install -y --force-yes network-manager
 
     sudo apt-get install -y --force-yes git
 
-    # Allow direct ethernet connection without router or network sharing -> IP4LL protocol
-    sudo apt-get install -y --force-yes avahi-autoipd avahi-daemon
+    # Connectivity
+    sudo apt-get install -y --force-yes samba samba-common avahi-autoipd avahi-utils
 }
 
 
-autostart_zeroconf_poppy_publisher()
+setup_network_tools()
 {
-    cat > poppy-publisher.service << EOF
-[Unit]
-Description=Poppy Zeroconf publisher
+    # samba
+    sudo sed -i 's/map to guest = .*/map to guest = never/g' /etc/samba/smb.conf
+    (echo "poppy"; echo "poppy") | sudo smbpasswd -s -a poppy
 
-[Service]
-Type=simple
-ExecStart=/usr/bin/avahi-publish -s $HOSTNAME _poppy_robot._tcp 9 &
-
-[Install]
-WantedBy=multi-user.target
+    # avahi services
+    sudo cat <<EOF >> /etc/avahi/services/ssh.service
+<?xml version="1.0" standalone='no'?>
+<!DOCTYPE service-group SYSTEM "avahi-service.dtd">
+<service-group>
+  <name replace-wildcards="yes">SSH on %h</name>
+  <service>
+    <type>_ssh._tcp</type>
+    <port>22</port>
+  </service>
+  <service>
+    <type>_sftp-ssh._tcp</type>
+    <port>22</port>
+  </service>
+</service-group>
 EOF
 
-    sudo mv poppy-publisher.service /lib/systemd/system/poppy-publisher.service
-    sudo systemctl daemon-reload
-    sudo systemctl enable poppy-publisher.service
+    sudo cat <<EOF >> /etc/avahi/services/poppy.service
+<?xml version="1.0" standalone='no'?>
+<!DOCTYPE service-group SYSTEM "avahi-service.dtd">
+<service-group>
+  <name replace-wildcards="yes">poppy-ergo-jr on %h</name>
+  <service>
+    <type>_poppy-robot._tcp</type>
+    <port>9</port>
+  </service>
+  <service>
+    <type>_device-info._tcp</type>
+    <port>0</port>
+  </service>
+  <service>
+    <type>_smb._tcp</type>
+    <port>445</port>
+  </service>
+</service-group>
+EOF
 }
 
 install_git_lfs()
@@ -127,5 +154,5 @@ install_custom_raspiconfig
 setup_user $username $password
 install_additional_packages
 system_setup
-autostart_zeroconf_poppy_publisher
+setup_network_tools
 install_git_lfs
