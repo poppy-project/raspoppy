@@ -39,14 +39,16 @@ system_setup()
     sudo locale-gen
 
     echo -e "\e[33mEnable camera.\e[0m"
-    sudo raspi-config --enable-camera
-    echo "bcm2835-v4l2" | sudo tee -a /etc/modules
+    echo "start_x=1" | sudo tee --append /boot/config.txt
+    echo "bcm2835-v4l2" | sudo tee /etc/modules-load.d/bcm2835-v4l2.conf
 
     echo -e "\e[33mSetup serial communication.\e[0m"
     sudo raspi-config --disable-serial-log
-    sudo su -c "echo \"init_uart_clock=16000000\" >> /boot/config.txt"
-    sudo su -c "echo \"enable_uart=1\" >> /boot/config.txt"
-    sudo su -c "echo \"dtoverlay=pi3-miniuart-bt\" >> /boot/config.txt"
+    sudo tee --append /boot/config.txt > /dev/null <<EOF
+init_uart_clock=16000000
+enable_uart=1
+dtoverlay=pi3-miniuart-bt
+EOF
 }
 
 install_additional_packages()
