@@ -36,9 +36,11 @@ configure_jupyter()
 c.NotebookApp.ip = '*'
 c.NotebookApp.open_browser = False
 c.NotebookApp.notebook_dir = '$JUPTER_NOTEBOOK_FOLDER'
-c.NotebookApp.tornado_settings = { 'headers': { 'Content-Security-Policy': "frame-ancestors 'self' *" } }
+c.NotebookApp.tornado_settings = {'headers': {'Content-Security-Policy': "frame-ancestors 'self' *"}}
 c.NotebookApp.allow_origin = '*'
 c.NotebookApp.extra_static_paths = ["static/custom/custom.js"]
+c.NotebookApp.token = ''
+c.NotebookApp.password = ''
 # --- Poppy configuration ---
 EOF
 
@@ -66,34 +68,26 @@ if not os.path.exists(d):
 
 autostart_jupyter()
 {
-
-    cat >> jupyter.service << EOF
+    sudo tee /etc/systemd/system/jupyter-notebook.service > /dev/null <<EOF
 [Unit]
-Description=Jupyter service
+Description=Jupyter notebook
+Wants=network-online.target
+After=network.target network-online.target
 
 [Service]
-Type=simple
-ExecStart=$HOME/.jupyter/start-daemon &
+PIDFile=/var/run/jupyter-notebook.pid
+ExecStart=$HOME/miniconda/bin/jupyter notebook
+User=poppy
+Group=poppy
+WorkingDirectory=$JUPTER_NOTEBOOK_FOLDER
+Type=oneshot
+RemainAfterExit=yes
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
-    sudo mv jupyter.service /lib/systemd/system/jupyter.service
-
-    cat > $HOME/.jupyter/launch.sh << 'EOF'
-export PATH=$HOME/miniconda/bin:$PATH
-jupyter notebook
-EOF
-
-    cat > $HOME/.jupyter/start-daemon << EOF
-#!/bin/bash
-su - $(whoami) -c "bash $HOME/.jupyter/launch.sh"
-EOF
-
-    chmod +x $HOME/.jupyter/launch.sh $HOME/.jupyter/start-daemon
-    sudo systemctl daemon-reload
-    sudo systemctl enable jupyter.service
+    sudo systemctl enable jupyter-notebook.service
 }
 
 install_conda
