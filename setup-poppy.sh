@@ -149,12 +149,12 @@ After=network.target network-online.target
 
 [Service]
 PIDFile=/var/run/puppet-master.pid
-ExecStart=python bouteillederouge.py
+Environment="PATH=$HOME/miniconda/bin"
+ExecStart=$HOME/miniconda/bin/python bouteillederouge.py
 User=poppy
 Group=poppy
 WorkingDirectory=$POPPY_ROOT/puppet-master
-Type=oneshot
-RemainAfterExit=yes
+Type=simple
 
 [Install]
 WantedBy=multi-user.target
@@ -170,14 +170,8 @@ redirect_port80_webinterface()
 
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
 
-# Flush any existing firewall rules we might have
-iptables -F
-iptables -t nat -F
-iptables -t mangle -F
-iptables -X
-
 # Perform the rewriting magic.
-iptables -t nat -A OUTPUT -o lo -p tcp --dport 80 -j REDIRECT --to 2280
+iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to 2280
 EOF
     chmod +x firewall
     sudo chown root:root firewall

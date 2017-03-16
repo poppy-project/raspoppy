@@ -76,12 +76,12 @@ After=network.target network-online.target
 
 [Service]
 PIDFile=/var/run/jupyter-notebook.pid
+Environment="PATH=$HOME/miniconda/bin"
 ExecStart=$HOME/miniconda/bin/jupyter notebook
 User=poppy
 Group=poppy
 WorkingDirectory=$JUPTER_NOTEBOOK_FOLDER
-Type=oneshot
-RemainAfterExit=yes
+Type=simple
 
 [Install]
 WantedBy=multi-user.target
