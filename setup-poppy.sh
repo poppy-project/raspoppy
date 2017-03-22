@@ -41,7 +41,7 @@ populate_notebooks()
         if [ "$creatures" == "poppy-torso" ]; then
           curl -o "Discover your Poppy Torso.ipynb" https://raw.githubusercontent.com/poppy-project/poppy-torso/master/software/samples/notebooks/Discover%20your%20Poppy%20Torso.ipynb
           curl -o "Record, save and play moves on Poppy Torso.ipynb" https://raw.githubusercontent.com/poppy-project/poppy-torso/master/software/samples/notebooks/Record%2C%20Save%20and%20Play%20Moves%20on%20Poppy%20Torso.ipynb
-          
+
           mkdir -p images
           pushd images
             wget https://raw.githubusercontent.com/poppy-project/poppy-torso/master/software/samples/notebooks/images/poppy_torso.jpg -O poppy_torso.jpg
@@ -103,7 +103,7 @@ install_snap()
 
         # Delete snap default examples
         rm snap/Examples/EXAMPLES
-        
+
         # Snap projects are dynamicaly modified and copied on a local folder for acces rights issues
         # This snap_local_folder is defined depending the OS in pypot.server.snap.get_snap_user_projects_directory()
         snap_local_folder="$HOME/.local/share/pypot"
@@ -141,35 +141,25 @@ autostartup_webinterface()
 
     fi
 
-    cat > puppet-master.service << EOF
+    sudo tee /etc/systemd/system/puppet-master.service > /dev/null <<EOF
 [Unit]
 Description=Puppet Master service
+Wants=network-online.target
+After=network.target network-online.target
 
 [Service]
+PIDFile=/var/run/puppet-master.pid
+Environment="PATH=$HOME/miniconda/bin"
+ExecStart=$HOME/miniconda/bin/python bouteillederouge.py
+User=poppy
+Group=poppy
+WorkingDirectory=$POPPY_ROOT/puppet-master
 Type=simple
-ExecStart=$POPPY_ROOT/puppet-master/start-pwid &
 
 [Install]
 WantedBy=multi-user.target
 EOF
 
-    sudo mv puppet-master.service /lib/systemd/system/puppet-master.service
-
-    cat > $POPPY_ROOT/puppet-master/start-pwid << EOF
-#!/bin/bash
-su - $(whoami) -c "bash $POPPY_ROOT/puppet-master/launch.sh"
-EOF
-
-    cat > $POPPY_ROOT/puppet-master/launch.sh << EOF
-export PATH=$HOME/miniconda/bin:$PATH
-
-pushd $POPPY_ROOT/puppet-master
-    python bouteillederouge.py 1>&2 2> /tmp/bouteillederouge.log
-popd
-EOF
-    chmod +x $POPPY_ROOT/puppet-master/launch.sh $POPPY_ROOT/puppet-master/start-pwid
-
-    sudo systemctl daemon-reload
     sudo systemctl enable puppet-master.service
 }
 
@@ -179,12 +169,6 @@ redirect_port80_webinterface()
 #!/bin/sh
 
 PATH=/sbin:/bin:/usr/sbin:/usr/bin
-
-# Flush any existing firewall rules we might have
-iptables -F
-iptables -t nat -F
-iptables -t mangle -F
-iptables -X
 
 # Perform the rewriting magic.
 iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to 2280
