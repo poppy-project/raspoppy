@@ -165,17 +165,10 @@ EOF
 
 redirect_port80_webinterface()
 {
-    cat > firewall << EOF
-#!/bin/sh
-
-PATH=/sbin:/bin:/usr/sbin:/usr/bin
-
-# Perform the rewriting magic.
-iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to 2280
-EOF
-    chmod +x firewall
-    sudo chown root:root firewall
-    sudo mv firewall /etc/network/if-up.d/firewall
+    sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to 2280
+    echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
+    echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
+    sudo apt-get install -y --force-yes iptables-persistent
 }
 
 setup_update()
