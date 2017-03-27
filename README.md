@@ -1,11 +1,11 @@
 
 # Raspoppy: Utility tools to setup a Raspberry Pi for Poppy robots
 
-This repository regroups the set of tools we use to setup a Raspberry board for a Poppy robot.
+This repository regroups the set of tools we use to setup a Raspberry Pi board for a Poppy robot.
 
-While we try to keep this procedure as simple as possible, it still requires a good knowledge of Linux OS and of Python. For those who are not interested in digging into those details, we provide ready-to-use SD-card images which  can be directly downloaded and copy into your Raspberry.
+While we try to keep this procedure as simple as possible, it still requires a good knowledge of Linux OS and of Python. For those who are not interested in digging into those details, we provide ready-to-use SD-card images which can be directly downloaded and copy into your Raspberry.
 
-*While this procedure is mainly designed for the Raspberry Pi 2 and 3, some parts (especially all conda recipes) should also work for the odroid XU4 as both boards used an armv7 CPU. It is important to also note that this procedure is only given as an example: i.e. this is how we build the SD-card images we provide. Yet, you can freely adapt to better match your needs.*
+*This procedure is mainly designed for the Raspberry Pi 2 and 3. However, some parts (especially all conda recipes) should also work for the odroid XU4 as both boards used an armv7 CPU. It is also important to note that this procedure is only given as an example: i.e. this is how we build the SD-card images we provide. Yet, you can freely adapt to better match your needs.*
 
 ## Current SD card ISO version: 1.0
 
@@ -40,26 +40,31 @@ While we try to keep this procedure as simple as possible, it still requires a g
 
 Just follow standard [instructions](https://www.raspberrypi.org/downloads/raspbian/) from raspberry.org. We use the latest lite Raspbian image.
 
-You will need to make sure that you have enough free space in your raspberry. The easiest way is to use the raspi-config script to expand your partition to the full SD-card. Just log into your raspberry and run:
+You will need to make sure that you have enough free space in your raspberry. The easiest way is to use the `raspi-config` script to expand your partition to the full SD-card. Just log into your Raspberry Pi and run:
 
 ```bash
 sudo raspi-config --expand-rootfs
 ```
-You will then need to reboot.
 
+You will then need to reboot.  
 *Note: If you have installed your SD-card using NOOBS the partition should already be extended.*
 
-### Setup the OS for our Poppy needs
+### Setup the OS for our needs
 
-Log again in your Raspberry. You can connect via ssh or directly plug a screen and a keyboard.
-*Note: the rest of the procedure will require to have an internet access on the Raspberry!*
+Log again in your Raspberry Pi. You can connect via ssh or directly plug a screen and a keyboard.  
+
+The following **requires the Raspberry Pi to have an internet access**.
 
 ```bash
-curl -L https://raw.githubusercontent.com/poppy-project/raspoppy/master/raspoppyfication.sh | bash -s "poppy-ergo-jr"
+curl -L https://raw.githubusercontent.com/poppy-project/raspoppy/master/raspoppyfication.sh -o /tmp/raspoppyfication.sh
+chmod +x /tmp/raspoppyfication.sh
+sudo /tmp/raspoppyfication.sh
 ```
 
-This one liner will install all the software detailed above, setup the control interface. So when it's done you should just reboot your Raspberry and connect to http://poppy.local.
+These commands will install all the software detailed above, and set up the control interface. When it's done, just reboot the Raspberry Pi and connect to `http://poppy.local`.
+
+The installation script defaults will set the board for an Ergo Jr, but it can be slightly tailored to suit your needs. `./raspoppyfication.sh --help` displays available options.
 
 ### Shrink the ISO
 
-To reduce the size of the image, you can follow [these instructions](./shrink-iso.md). Be careful though, a bad manipulation could mess with your partitions!
+Follow [these instructions](./shrink-iso.md) to reduce the size of the image. Be careful though, a bad manipulation could mess up your partitions!
