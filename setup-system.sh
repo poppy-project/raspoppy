@@ -64,8 +64,14 @@ install_additional_packages()
 
     # Connectivity
     sudo apt-get install -y --force-yes samba samba-common avahi-autoipd avahi-utils
-}
 
+    # board version utility
+    wget https://github.com/damiencaselli/hrpi-version/archive/1.0.0.zip -O hrpi-version.zip
+    unzip hrpi-version.zip
+    sudo mv hrpi-version-1.0.0/usr/bin/hrpi-version.sh /usr/bin/hrpi-version
+    rm hrpi-version.zip
+    rm -rf hrpi-version-1.0.0
+}
 
 setup_network_tools()
 {
