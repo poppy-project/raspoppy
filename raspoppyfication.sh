@@ -15,6 +15,7 @@ function usage() {
   echo "  --username           Set the Poppy user name (default: poppy)"
   echo "  --password           Set password for the Poppy user (default: poppy)"
   echo "  --hostname           Set the robot hostname (default: poppy)"
+  echo "  --branch             Install from a given git branch (default: master)"
   echo "  --shutdown           Shutdown the system after installation"
   echo "  -?|--help            Show this help"
   exit
@@ -29,48 +30,53 @@ case $i in
   shift
   ;;
   --creature=*)
-  POPPY_CREATURE="${i#*=}"
+  poppy_creature="${i#*=}"
   shift
   ;;
   --username=*)
-  POPPY_USERNAME="${i#*=}"
+  poppy_username="${i#*=}"
   shift
   ;;
   --password=*)
-  POPPY_PASSWORD="${i#*=}"
+  poppy_password="${i#*=}"
   shift
   ;;
   --hostname=*)
-  POPPY_HOSTNAME="${i#*=}"
+  poppy_hostname="${i#*=}"
+  shift
+  ;;
+  --branch=*)
+  git_branch="${i#*=}"
   shift
   ;;
   -s|--shutdown)
-  SHUTDOWN=true
+  shutdown_after_install=true
   shift
   ;;
 esac
 done
 
-POPPY_CREATURE=${POPPY_CREATURE:-"poppy-ergo-jr"}
-POPPY_USERNAME=${POPPY_USERNAME:-"poppy"}
-POPPY_PASSWORD=${POPPY_PASSWORD:-"poppy"}
-POPPY_HOSTNAME=${POPPY_HOSTNAME:-"poppy"}
+poppy_creature=${poppy_creature:-"poppy-ergo-jr"}
+poppy_username=${poppy_username:-"poppy"}
+poppy_password=${poppy_password:-"poppy"}
+poppy_hostname=${poppy_hostname:-"poppy"}
+git_branch=${git_branch:-"master"}
 
-url_root="https://raw.githubusercontent.com/poppy-project/raspoppy/master"
+url_root="https://raw.githubusercontent.com/poppy-project/raspoppy/$git_branch"
 
 cd /tmp || exit
 wget $url_root/setup-system.sh
-bash setup-system.sh "$POPPY_USERNAME" "$POPPY_PASSWORD"
+bash setup-system.sh "$poppy_username" "$poppy_password"
 
 wget $url_root/setup-python.sh
-sudo -u $POPPY_USERNAME bash setup-python.sh
+sudo -u $poppy_username bash setup-python.sh
 
 wget $url_root/setup-poppy.sh
-sudo -u $POPPY_USERNAME bash setup-poppy.sh "$POPPY_CREATURE" "$POPPY_HOSTNAME"
+sudo -u $poppy_username bash setup-poppy.sh "$poppy_creature" "$poppy_hostname"
 
-echo -e "\e[33mChange hostname to \e[4m$POPPY_HOSTNAME.\e[0m"
-sudo raspi-config --change-hostname "$POPPY_HOSTNAME"
+echo -e "\e[33mChange hostname to \e[4m$poppy_hostname.\e[0m"
+sudo raspi-config --change-hostname "$poppy_hostname"
 
-if [ "$SHUTDOWN" = true ]; then
+if [ "$shutdown_after_install" = true ]; then
   sudo shutdown -h now
 fi
