@@ -32,6 +32,9 @@ setup_user()
 
 system_setup()
 {
+    # Change password for pi user
+    sudo usermod -p "$(mkpasswd --method=sha-512 raspoppy)" pi
+
     # Add more langs (GB, US, FR)
     sudo sed -i 's/^#\s*\(en_GB.UTF-8 UTF-8\)/\1/g' /etc/locale.gen
     sudo sed -i 's/^#\s*\(en_US.UTF-8 UTF-8\)/\1/g' /etc/locale.gen

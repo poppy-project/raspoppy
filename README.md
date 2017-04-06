@@ -51,7 +51,7 @@ You will then need to reboot.
 
 ### Setup the OS for our needs
 
-Log again in your Raspberry Pi. You can connect via ssh or directly plug a screen and a keyboard.  
+Log again in your Raspberry Pi. You can connect via ssh or directly plug a screen and a keyboard.
 
 The following **requires the Raspberry Pi to have an internet access**.
 
@@ -61,9 +61,9 @@ chmod +x /tmp/raspoppyfication.sh
 sudo /tmp/raspoppyfication.sh
 ```
 
-These commands will install all the software detailed above, and set up the control interface. When it's done, just reboot the Raspberry Pi and connect to `http://poppy.local`.
+These commands will install all the software detailed above, and set up the control interface. When it's done, reboot the Raspberry Pi and connect to `http://poppy.local`.
 
-The installation script defaults will set the board for an Ergo Jr, but it can be slightly tailored to suit your needs. `./raspoppyfication.sh --help` displays available options.
+The installation script defaults will set the board for a Poppy Ergo Jr, but it can be slightly tailored to suit your needs. `./raspoppyfication.sh --help` displays available options.
 
 ### Shrink the ISO
 
