@@ -7,7 +7,7 @@ While we try to keep this procedure as simple as possible, it still requires a g
 
 *This procedure is mainly designed for the Raspberry Pi 2 and 3. However, some parts (especially all conda recipes) should also work for the odroid XU4 as both boards used an armv7 CPU. It is also important to note that this procedure is only given as an example: i.e. this is how we build the SD-card images we provide. Yet, you can freely adapt to better match your needs.*
 
-## Current SD card ISO version: 1.0
+## Current SD card ISO version: 2.0.0
 
 * [x] Default user: poppy password: poppy
 * [x] Default hostname: poppy
@@ -19,12 +19,12 @@ While we try to keep this procedure as simple as possible, it still requires a g
     * [x] jupyter 4.0.6
     * [x] matplotlib 1.5.0
     * [x] nbextensions alpha
-    * [x] pypot 2.11.6
-    * [x] poppy-creatures 1.8.1
-    * [x] poppy-ergo-jr 1.6.2
+    * [x] pypot 3.0.1
+    * [x] poppy-creatures 2.0.0
+    * [x] poppy-ergo-jr 2.0.0
     * [x] hampy 1.4.1
     * [x] explauto 1.2.0
-    * [x] ikpy 2.0.0
+    * [x] ikpy 2.2.1
     * [x] Flask 0.10.1
 * [x] auto start jupyter at boot
 * [x] auto start web interface at boot
