@@ -159,7 +159,7 @@ dhcp-range=192.168.0.3,192.168.0.20,12h
 EOF
 
     sed -i 's/^auto lo$/auto lo wlan0/g' /etc/network/interfaces
-    sed -i '/iface wlan0 inet manual/{N;N;s/wpa-conf/# wpa-conf/'} /etc/network/interfaces
+    sed -i '/iface wlan0 inet manual/{N;N;s/wpa-conf/# wpa-conf/}' /etc/network/interfaces
 
     tee /usr/bin/rpi-hotspot > /dev/null <<'EOF'
 #!/bin/bash
