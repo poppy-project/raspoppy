@@ -58,7 +58,7 @@ install_additional_packages()
 {
     sudo apt-get update
 
-    sudo apt-get install build-essential unzip
+    sudo apt-get install -y --force-yes build-essential unzip
 
     # Used for being able to change hostname without reboot
     sudo apt-get install -y --force-yes network-manager
@@ -120,95 +120,8 @@ EOF
 EOF
 }
 
-setup_hotspot()
-{
-    apt-get install -y hostapd dnsmasq
-    systemctl disable hostapd
-    systemctl disable dnsmasq
-    tee /etc/hostapd/hostapd.conf > /dev/null <<EOF
-interface=wlan0
-driver=nl80211
-ssid=PoppyHotspot
-hw_mode=g
-channel=6
-wmm_enabled=0
-macaddr_acl=0
-auth_algs=1
-ignore_broadcast_ssid=0
-wpa=2
-wpa_passphrase=poppyproject
-wpa_key_mgmt=WPA-PSK
-wpa_pairwise=TKIP
-rsn_pairwise=CCMP
-EOF
-
-    tee --append /etc/default/hostapd > /dev/null <<EOF
-
-# Added by Poppy script
-DAEMON_CONF="/etc/hostapd/hostapd.conf"
-EOF
-
-    tee --append /etc/dnsmasq.conf > /dev/null <<EOF
-
-# Added by Poppy script
-# Hotspot configuration
-no-resolv
-interface=wlan0
-bind-interfaces
-dhcp-range=192.168.0.3,192.168.0.20,12h
-EOF
-
-    sed -i 's/^auto lo$/auto lo wlan0/g' /etc/network/interfaces
-    sed -i '/iface wlan0 inet manual/{N;N;s/wpa-conf/# wpa-conf/}' /etc/network/interfaces
-
-    tee /usr/bin/rpi-hotspot > /dev/null <<'EOF'
-#!/bin/bash
-#
-
-if [ -f /boot/hotspot.txt ]; then
-  hotspot_ssid=$(sed -n -e 's/^ssid=\([[:alnum:]]\+\)/\1/p' /boot/hotspot.txt)
-  hotspot_ssid="${hotspot_ssid:-PoppyHotspot}"
-  hotspot_passphrase=$(sed -n -e 's/^passphrase=\([[:alnum:]]\+\)/\1/p' /boot/hotspot.txt)
-  hotspot_passphrase="${hotspot_passphrase:-poppyproject}"
-
-  sed -i "s/ssid=.*/ssid=$hotspot_ssid/g" /etc/hostapd/hostapd.conf
-  sed -i "s/passphrase=.*/passphrase=$hotspot_passphrase/g" /etc/hostapd/hostapd.conf
-
-  ip link set dev wlan0 down
-  ip a add 192.168.0.1/24 dev wlan0
-  ip link set dev wlan0 up
-  systemctl start dnsmasq
-  systemctl start hostapd
-else
-  wpa_supplicant -B -i wlan0 -c /etc/wpa_supplicant/wpa_supplicant.conf > /dev/null 2>&1
-fi
-EOF
-
-    chmod +x /usr/bin/rpi-hotspot
-
-    tee /etc/systemd/system/rpi-hotspot.service > /dev/null <<EOF
-[Unit]
-Description=Generates a hotspot
-After=network-online.target
-
-[Service]
-Type=oneshot
-RemainAfterExit=yes
-ExecStart=/usr/bin/rpi-hotspot
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-    systemctl enable rpi-hotspot.service
-}
-
 install_custom_raspiconfig
 setup_user $username $password
 install_additional_packages
 system_setup
 setup_network_tools
-
-if [ "$(hrpi-version)" = "rpi-3" ]; then
-    setup_hotspot
-fi

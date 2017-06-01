@@ -31,7 +31,7 @@ configure_jupyter()
 
     yes | jupyter notebook --generate-config
 
-    cat >> $JUPYTER_CONFIG_FILE << EOF
+    cat >> $JUPYTER_CONFIG_FILE <<EOF
 # --- Poppy configuration ---
 c.NotebookApp.ip = '*'
 c.NotebookApp.open_browser = False
@@ -46,7 +46,7 @@ EOF
 
   JUPYTER_CUSTOM_JS_FILE=$HOME/.jupyter/custom/custom.js
   mkdir -p "$HOME/.jupyter/custom"
-  cat > "$JUPYTER_CUSTOM_JS_FILE" << EOF
+  cat > "$JUPYTER_CUSTOM_JS_FILE" <<EOF
 /* Allow new tab to be openned in an iframe */
 define(['base/js/namespace'], function(Jupyter){
   Jupyter._target = '_self';

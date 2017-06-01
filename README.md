@@ -9,7 +9,7 @@ While we try to keep this procedure as simple as possible, it still requires a g
 
 ## Current SD card ISO version: 2.0.0
 
-* [x] Default user: poppy password: poppy
+* [x] Default user: `poppy` password: `poppy`
 * [x] Default hostname: poppy
 * [x] Python 2.7.10 [miniconda latest - 3.18.3](http://repo.continuum.io/miniconda/Miniconda3-3.18.3-Linux-armv7l.sh) distribution for linux-armv7
 * [x] Conda recipes for linux-armv7 (on the [poppy-project](https://anaconda.org/poppy-project/) channel):
