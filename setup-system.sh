@@ -58,7 +58,7 @@ install_additional_packages()
 {
     sudo apt-get update
 
-    sudo apt-get install -y --force-yes build-essential unzip
+    sudo apt-get install -y --force-yes build-essential unzip whois
 
     # Used for being able to change hostname without reboot
     sudo apt-get install -y --force-yes network-manager
@@ -121,7 +121,7 @@ EOF
 }
 
 install_custom_raspiconfig
-setup_user $username $password
 install_additional_packages
+setup_user $username $password
 system_setup
 setup_network_tools
