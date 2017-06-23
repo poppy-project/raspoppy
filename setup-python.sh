@@ -76,7 +76,7 @@ After=network.target network-online.target
 
 [Service]
 PIDFile=/var/run/jupyter-notebook.pid
-Environment="PATH=$HOME/miniconda/bin"
+Environment="PATH=$PATH"
 ExecStart=$HOME/miniconda/bin/jupyter notebook
 User=poppy
 Group=poppy
