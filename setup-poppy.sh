@@ -149,7 +149,7 @@ After=network.target network-online.target
 
 [Service]
 PIDFile=/var/run/puppet-master.pid
-Environment="PATH=$HOME/miniconda/bin"
+Environment="PATH=$PATH"
 ExecStart=$HOME/miniconda/bin/python bouteillederouge.py
 User=poppy
 Group=poppy
