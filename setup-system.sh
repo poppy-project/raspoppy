@@ -71,7 +71,7 @@ install_additional_packages()
     # board version utility
     wget https://github.com/damiencaselli/hrpi-version/archive/1.0.0.zip -O hrpi-version.zip
     unzip hrpi-version.zip
-    mv hrpi-version-1.0.0/usr/bin/hrpi-version.sh /usr/bin/hrpi-version
+    sudo mv hrpi-version-1.0.0/usr/bin/hrpi-version.sh /usr/bin/hrpi-version
     rm hrpi-version.zip
     rm -rf hrpi-version-1.0.0
 }
