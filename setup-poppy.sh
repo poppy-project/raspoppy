@@ -7,7 +7,7 @@ export PATH="$HOME/miniconda/bin:$PATH"
 
 install_poppy_libraries()
 {
-    conda install $creature
+    conda install "$creature"
 
 
     if [ -z ${POPPY_ROOT+x} ]; then
@@ -64,7 +64,7 @@ populate_notebooks()
         # Copy the documentation pdf
         wget https://www.gitbook.com/download/pdf/book/poppy-project/poppy-docs?lang=en -O documentation.pdf
 
-        ln -s $POPPY_ROOT poppy_src
+        ln -s "$POPPY_ROOT" poppy_src
     popd
 }
 
@@ -72,7 +72,7 @@ setup_puppet_master()
 {
     if [ -z ${POPPY_ROOT+x} ]; then
         export POPPY_ROOT="$HOME/dev"
-        mkdir -p $POPPY_ROOT
+        mkdir -p "$POPPY_ROOT"
     fi
 
     pushd "$POPPY_ROOT"
@@ -84,7 +84,7 @@ setup_puppet_master()
         pushd puppet-master
             conda install flask pyyaml requests
 
-            python bootstrap.py $hostname $creature
+            python bootstrap.py "$hostname" "$creature"
             install_snap "$(pwd)"
         popd
     popd
@@ -113,14 +113,14 @@ install_snap()
         for project in $pypot_root/server/snap_projects/*.xml; do
             # Local file doesn"t exist yet if SnapRobotServer has not been started
             filename=$(basename "$project")
-            cp $project $snap_local_folder/
-            ln -s $snap_local_folder/$filename snap/Examples/
+            cp "$project" "$snap_local_folder/"
+            ln -s "$snap_local_folder/$filename" snap/Examples/
 
             echo -e "$filename\t$filename" >> snap/Examples/EXAMPLES
         done
 
 
-        ln -s $snap_local_folder/pypot-snap-blocks.xml snap/libraries/poppy.xml
+        ln -s "$snap_local_folder/pypot-snap-blocks.xml" snap/libraries/poppy.xml
         echo -e "poppy.xml\tPoppy robots" >> snap/libraries/LIBRARIES
 
 
@@ -137,7 +137,7 @@ autostartup_webinterface()
 
     if [ -z ${POPPY_ROOT+x} ]; then
         export POPPY_ROOT="$HOME/dev"
-        mkdir -p $POPPY_ROOT
+        mkdir -p "$POPPY_ROOT"
 
     fi
 
@@ -196,16 +196,16 @@ with open(config['update']['logfile'], 'w') as f:
           config['update']['lockfile']], stdout=f, stderr=f)
 EOF
     chmod +x poppy-update
-    mv poppy-update $HOME/miniconda/bin/
+    mv poppy-update "$HOME/miniconda/bin/"
 }
 
 
 set_logo()
 {
-    wget https://raw.githubusercontent.com/poppy-project/raspoppy/master/poppy_logo -O $HOME/.poppy_logo
+    wget https://raw.githubusercontent.com/poppy-project/raspoppy/master/poppy_logo -O "$HOME/.poppy_logo"
     # Remove old occurences of poppy_logo in .bashrc
-    sed -i /poppy_logo/d $HOME/.bashrc
-    echo cat $HOME/.poppy_logo >> $HOME/.bashrc
+    sed -i /poppy_logo/d "$HOME/.bashrc"
+    echo cat "$HOME/.poppy_logo" >> "$HOME/.bashrc"
 }
 
 install_poppy_libraries

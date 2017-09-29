@@ -19,13 +19,13 @@ setup_user()
 
     echo -e "\e[33mCreate a user \e[4m$username\e[0m."
 
-    pass=$(perl -e 'print crypt($ARGV[0], "password")' $password)
-    sudo useradd -m -p $pass $username
+    pass=$(perl -e 'print crypt($ARGV[0], "password")' "$password")
+    sudo useradd -m -p "$pass" "$username"
 
     # copy groups from pi user
-    G=`groups pi | cut -f2 -d':'`
+    G=$(groups pi | cut -f2 -d':')
     G=`echo ${G} | sed 's/ /,/g'`
-    sudo usermod -a -G $G $username
+    sudo usermod -a -G "$G" "$username"
 
     echo "$username ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/011_poppy-nopasswd
 }
@@ -122,6 +122,6 @@ EOF
 
 install_custom_raspiconfig
 install_additional_packages
-setup_user $username $password
+setup_user "$username" "$password"
 system_setup
 setup_network_tools

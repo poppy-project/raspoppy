@@ -13,19 +13,19 @@ While we try to keep this procedure as simple as possible, it still requires a g
 * [x] Default hostname: poppy
 * [x] Python 2.7.10 [miniconda latest - 3.18.3](http://repo.continuum.io/miniconda/Miniconda3-3.18.3-Linux-armv7l.sh) distribution for linux-armv7
 * [x] Conda recipes for linux-armv7 (on the [poppy-project](https://anaconda.org/poppy-project/) channel):
-    * [x] numpy 1.9.2
-    * [x] scipy 0.16.0 (need libgfortran3)
-    * [x] opencv 3.1.0
+    * [x] explauto 1.2.0
+    * [x] Flask 0.10.1
+    * [x] hampy 1.4.1
+    * [x] ikpy 2.2.1
     * [x] jupyter 4.0.6
     * [x] matplotlib 1.5.0
     * [x] nbextensions alpha
-    * [x] pypot 3.0.1
+    * [x] numpy 1.9.2
+    * [x] opencv 3.1.0
     * [x] poppy-creatures 2.0.0
     * [x] poppy-ergo-jr 2.0.0
-    * [x] hampy 1.4.1
-    * [x] explauto 1.2.0
-    * [x] ikpy 2.2.1
-    * [x] Flask 0.10.1
+    * [x] pypot 3.0.1
+    * [x] scipy 0.16.0 (need libgfortran3)
 * [x] auto start jupyter at boot
 * [x] auto start web interface at boot
 * [x] Snap!
@@ -64,6 +64,16 @@ sudo /tmp/raspoppyfication.sh
 These commands will install all the software detailed above, and set up the control interface. When it's done, reboot the Raspberry Pi and connect to `http://poppy.local`.
 
 The installation script defaults will set the board for a Poppy Ergo Jr, but it can be slightly tailored to suit your needs. `./raspoppyfication.sh --help` displays available options.
+
+Options are:
+
+- `--creature`: Set the robot type (default: `poppy-ergo-jr`)
+- `--username`: Set the Poppy user name (default: `poppy`)
+- `--password`: Set password for the Poppy user (default: `poppy`)
+- `--hostname`: Set the robot hostname (default: `poppy`)
+- `--branch`: Install from a given git branch (default: `master`)
+- `--shutdown`: Shutdowns the system after installation
+- `-?|--help`: Shows help
 
 ### Shrink the ISO
 

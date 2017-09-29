@@ -7,7 +7,7 @@ install_conda()
     bash Miniconda-latest-Linux-armv7l.sh -b
     rm Miniconda-latest-Linux-armv7l.sh
 
-    echo 'export PATH=$HOME/miniconda/bin:$PATH' >> $HOME/.bashrc
+    echo 'export PATH=$HOME/miniconda/bin:$PATH' >> "$HOME/.bashrc"
     export PATH="$HOME/miniconda/bin:$PATH"
 
     conda config --add channels poppy-project
@@ -27,11 +27,11 @@ configure_jupyter()
     JUPYTER_CONFIG_FILE=$HOME/.jupyter/jupyter_notebook_config.py
     export JUPTER_NOTEBOOK_FOLDER=$HOME/notebooks
 
-    mkdir -p $JUPTER_NOTEBOOK_FOLDER
+    mkdir -p "$JUPTER_NOTEBOOK_FOLDER"
 
     yes | jupyter notebook --generate-config
 
-    cat >> $JUPYTER_CONFIG_FILE <<EOF
+    cat >> "$JUPYTER_CONFIG_FILE" <<EOF
 # --- Poppy configuration ---
 c.NotebookApp.ip = '*'
 c.NotebookApp.open_browser = False
