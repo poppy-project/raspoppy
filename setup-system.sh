@@ -20,7 +20,7 @@ setup_user()
     echo -e "\e[33mCreate a user \e[4m$username\e[0m."
 
     pass=$(perl -e 'print crypt($ARGV[0], "password")' "$password")
-    sudo useradd -m -p "$pass" "$username"
+    sudo useradd -m -p "$pass" -s /bin/bash "$username"
 
     # copy groups from pi user
     G=$(groups pi | cut -f2 -d':')
