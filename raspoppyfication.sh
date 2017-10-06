@@ -18,6 +18,11 @@ function usage() {
   echo "  --branch             Install from a given git branch (default: master)"
   echo "  --shutdown           Shutdown the system after installation"
   echo "  -?|--help            Show this help"
+  echo ""
+  echo "Example usage:"
+  echo "  ./raspoppyfication.sh"
+  echo "  ./raspoppyfication.sh --creature=poppy-ergo-starter --hostname=roboto"
+  echo "  ./raspoppyfication.sh --help"
   exit
 }
 
