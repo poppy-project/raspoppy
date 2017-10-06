@@ -2,6 +2,7 @@
 
 creature=$1
 hostname=$2
+snap_version="4.0.10.2"
 
 export PATH="$HOME/miniconda/bin:$PATH"
 
@@ -10,30 +11,30 @@ install_poppy_libraries()
     conda install "$creature"
 
 
-    if [ -z ${POPPY_ROOT+x} ]; then
+    if [ -z "${POPPY_ROOT+x}" ]; then
         export POPPY_ROOT="$HOME/dev"
-        echo 'export POPPY_ROOT="$HOME/dev" >> ~/.bashrc'
+        echo "export POPPY_ROOT=$HOME/dev" >> "$HOME/.bashrc"
     fi
     mkdir -p "$POPPY_ROOT"
 
     # Symlink Poppy Python packages to allow more easily to users to view and modify the code
     for repo in pypot $creature ; do
         # Replace - to _ (I don't like regex)
-        module=`python -c 'str = "'$repo'" ; print str.replace("-","_")'`
+        module=$(python -c "str = '$repo'; print str.replace('-','_')")
 
-        module_path=`python -c 'import '$module', os; print os.path.dirname('$module'.__file__)'`
+        module_path=$(python -c "import $module, os; print os.path.dirname($module.__file__)")
         ln -s "$module_path" "$POPPY_ROOT"
     done
 }
 
 populate_notebooks()
 {
-    if [ -z ${JUPTER_NOTEBOOK_FOLDER+x} ]; then
+    if [ -z "${JUPTER_NOTEBOOK_FOLDER+x}" ]; then
         JUPTER_NOTEBOOK_FOLDER="$HOME/notebooks"
     fi
     mkdir -p "$JUPTER_NOTEBOOK_FOLDER"
 
-    pushd $JUPTER_NOTEBOOK_FOLDER
+    pushd "$JUPTER_NOTEBOOK_FOLDER"
 
         if [ "$creature" == "poppy-humanoid" ]; then
             curl -o Demo_interface.ipynb https://raw.githubusercontent.com/poppy-project/poppy-humanoid/master/software/samples/notebooks/Demo%20Interface.ipynb
@@ -70,7 +71,7 @@ populate_notebooks()
 
 setup_puppet_master()
 {
-    if [ -z ${POPPY_ROOT+x} ]; then
+    if [ -z "${POPPY_ROOT+x}" ]; then
         export POPPY_ROOT="$HOME/dev"
         mkdir -p "$POPPY_ROOT"
     fi
@@ -93,11 +94,11 @@ setup_puppet_master()
 # Called from setup_puppet_master()
 install_snap()
 {
-    pushd $1
-        wget https://github.com/jmoenig/Snap--Build-Your-Own-Blocks/archive/master.zip -O master.zip
-        unzip master.zip
-        rm master.zip
-        mv Snap--Build-Your-Own-Blocks-master snap
+    pushd "$1"
+        wget "https://github.com/jmoenig/Snap--Build-Your-Own-Blocks/archive/$snap_version.zip" -O "$snap_version.zip"
+        unzip "$snap_version.zip"
+        rm "$snap_version.zip"
+        mv "Snap--Build-Your-Own-Blocks-$snap_version" snap
 
         pypot_root=$(python -c "import pypot, os; print(os.path.dirname(pypot.__file__))")
 
@@ -135,10 +136,9 @@ autostartup_webinterface()
 {
     cd || exit
 
-    if [ -z ${POPPY_ROOT+x} ]; then
+    if [ -z "${POPPY_ROOT+x}" ]; then
         export POPPY_ROOT="$HOME/dev"
         mkdir -p "$POPPY_ROOT"
-
     fi
 
     sudo tee /etc/systemd/system/puppet-master.service > /dev/null <<EOF
@@ -168,13 +168,13 @@ redirect_port80_webinterface()
     sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to 2280
     echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
     echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
-    sudo apt-get install -y --force-yes iptables-persistent
+    sudo apt-get install -y iptables-persistent
 }
 
 setup_update()
 {
     cd || exit
-    wget https://raw.githubusercontent.com/poppy-project/raspoppy/master/poppy-update.sh -O ~/.poppy-update.sh
+    wget https://raw.githubusercontent.com/poppy-project/raspoppy/master/poppy-update.sh -O "$HOME/.poppy-update.sh"
 
     cat > poppy-update << EOF
 #!/usr/bin/env python

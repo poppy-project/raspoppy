@@ -7,7 +7,7 @@ install_conda()
     bash Miniconda-latest-Linux-armv7l.sh -b
     rm Miniconda-latest-Linux-armv7l.sh
 
-    echo 'export PATH=$HOME/miniconda/bin:$PATH' >> "$HOME/.bashrc"
+    echo "export PATH=$HOME/miniconda/bin:$PATH" >> "$HOME/.bashrc"
     export PATH="$HOME/miniconda/bin:$PATH"
 
     conda config --add channels poppy-project

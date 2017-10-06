@@ -38,7 +38,7 @@ system_setup()
     # Add more langs (GB, US, FR)
     sudo sed -i 's/^#\s*\(en_GB.UTF-8 UTF-8\)/\1/g' /etc/locale.gen
     sudo sed -i 's/^#\s*\(en_US.UTF-8 UTF-8\)/\1/g' /etc/locale.gen
-    sudo sed -i 's/^#\s*\(fr_FR.UTF-8 UTF-8\)/\1/g' /etc/locale.gen
+    sudo sed -i 's/^#\s*\(fr_FR.UTF-8 UTF-8\)/\1/g' /etc/locale.gengroups
     sudo locale-gen
 
     echo -e "\e[33mEnable camera.\e[0m"
@@ -58,15 +58,12 @@ install_additional_packages()
 {
     sudo apt-get update
 
-    sudo apt-get install -y --force-yes build-essential unzip whois
-
-    # Used for being able to change hostname without reboot
-    sudo apt-get install -y --force-yes network-manager
-
-    sudo apt-get install -y --force-yes git
-
-    # Connectivity
-    sudo apt-get install -y --force-yes samba samba-common avahi-autoipd avahi-utils
+    sudo apt-get install -y \
+        build-essential unzip whois \
+        network-manager \
+        git \
+        samba samba-common avahi-autoipd avahi-utils \
+        libxslt-dev
 
     # board version utility
     wget https://github.com/damiencaselli/hrpi-version/archive/1.0.0.zip -O hrpi-version.zip
