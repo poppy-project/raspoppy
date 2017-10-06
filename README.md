@@ -38,7 +38,7 @@ While we try to keep this procedure as simple as possible, it still requires a g
 
 ### Install Raspbian
 
-Just follow standard [instructions](https://www.raspberrypi.org/downloads/raspbian/) from raspberry.org. We use the latest lite Raspbian image.
+Just follow standard [instructions](https://www.raspberrypi.org/downloads/raspbian/) from raspberry.org. We use [Raspbian Stretch Lite *2017-09-07* image](https://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-2017-09-08/2017-09-07-raspbian-stretch-lite.zip).
 
 You will need to make sure that you have enough free space in your raspberry. The easiest way is to use the `raspi-config` script to expand your partition to the full SD-card. Just log into your Raspberry Pi and run:
 
