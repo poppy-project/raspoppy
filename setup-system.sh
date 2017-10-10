@@ -23,9 +23,9 @@ setup_user()
     sudo useradd -m -p "$pass" -s /bin/bash "$username"
 
     # copy groups from pi user
-    G=$(groups pi | cut -f2 -d':')
-    G=`echo ${G} | sed 's/ /,/g'`
-    sudo usermod -a -G "$G" "$username"
+    user_groups=$(id -Gn pi)
+    user_groups=${user_groups// /,}
+    sudo usermod -a -G "$user_groups" "$username"
 
     echo "$username ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/011_poppy-nopasswd
 }
