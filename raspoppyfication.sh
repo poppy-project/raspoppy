@@ -82,7 +82,7 @@ sudo -u "$poppy_username" bash setup-poppy.sh "$poppy_creature" "$poppy_hostname
 
 echo -e "\e[33mSetting hotspot.\e[0m"
 wget "$url_root/setup-hotspot.sh"
-bash setup-hotspot.sh "$poppy_hostname"
+bash setup-hotspot.sh
 
 echo -e "\e[33mChange hostname to \e[4m$poppy_hostname.\e[0m"
 sudo raspi-config --change-hostname "$poppy_hostname"
