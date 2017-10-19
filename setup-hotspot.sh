@@ -8,6 +8,7 @@ if [ "$(hrpi-version)" = "rpi-3" ]; then
     mv rpi3-hotspot* rpi3-hotspot
     cd rpi3-hotspot || exit
     ./install.sh
+    cd /tmp || exit
     rm -rf rpi3-hotspot
 
     tee /boot/hotspot.txt <<EOF
