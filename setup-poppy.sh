@@ -3,6 +3,7 @@
 creature=$1
 hostname=$2
 snap_version="4.0.10.2"
+puppet_master_branch="1.0.0"
 
 export PATH="$HOME/miniconda/bin:$PATH"
 
@@ -77,10 +78,10 @@ setup_puppet_master()
     fi
 
     pushd "$POPPY_ROOT"
-        wget https://github.com/poppy-project/puppet-master/archive/master.zip
-        unzip master.zip
-        rm master.zip
-        mv puppet-master-master puppet-master
+        wget -O puppet-master.zip "https://github.com/poppy-project/puppet-master/archive/${puppet_master_branch}.zip"
+        unzip puppet-master.zip
+        rm puppet-master.zip
+        mv "puppet-master-${puppet_master_branch}" puppet-master
 
         pushd puppet-master
             conda install flask pyyaml requests
