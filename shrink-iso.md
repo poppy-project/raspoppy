@@ -6,7 +6,7 @@
 2.  Find the name of the device using *sudo fdisk -l* (in our case it's /dev/sda)
 3.  Resize the filesystem
     * `sudo e2fsck -f /dev/sda2`
-    * `sudo resize2fs /dev/sda2 2500M` (2.5G should be enough for us)
+    * `sudo resize2fs /dev/sda2 3400M`
 4.  Resize the partition (it must be larger than the file system):
 
     ```bash
@@ -28,5 +28,5 @@
 Copy the image using dd and count:
 
 ```bash
-sudo dd bs=1m count=3000 if=/dev/rdisk2 of=$(date +%F)-poppy-ergo-jr.img
+sudo dd bs=1m count=3500 if=/dev/rdisk2 of=$(date +%F)-poppy-ergo-jr.img
 ```
