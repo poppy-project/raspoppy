@@ -2,7 +2,7 @@
 
 creature=$1
 hostname=$2
-snap_version="4.0.10.2"
+snap_version="4.1.0.4"
 puppet_master_branch="1.0.1"
 
 export PATH="$HOME/miniconda/bin:$PATH"
