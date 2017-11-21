@@ -5,12 +5,11 @@ password=$2
 
 install_custom_raspiconfig()
 {
-    wget https://raw.githubusercontent.com/pierre-rouanet/raspi-config/master/raspi-config
+    wget https://raw.githubusercontent.com/poppy-project/raspi-config/master/raspi-config
     chmod +x raspi-config
     sudo chown root:root raspi-config
     sudo mv raspi-config /usr/bin/
 }
-
 
 setup_user()
 {
@@ -49,7 +48,6 @@ system_setup()
     sudo raspi-config --disable-serial-log
     sudo tee --append /boot/config.txt > /dev/null <<EOF
 init_uart_clock=16000000
-enable_uart=1
 dtoverlay=pi3-miniuart-bt
 EOF
 }

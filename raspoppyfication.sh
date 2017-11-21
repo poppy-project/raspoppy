@@ -85,7 +85,7 @@ wget "$url_root/setup-hotspot.sh"
 bash setup-hotspot.sh
 
 echo -e "\e[33mChange hostname to \e[4m$poppy_hostname.\e[0m"
-sudo hostnamectl set-hostname "$poppy_hostname"
+sudo raspi-config --change-hostname "$poppy_hostname"
 
 if [ $shutdown_after_install -eq 1 ]; then
   sudo shutdown -h now
