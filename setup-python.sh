@@ -29,7 +29,7 @@ configure_jupyter()
 
     mkdir -p "$JUPTER_NOTEBOOK_FOLDER"
 
-    yes | jupyter notebook --generate-config
+    jupyter notebook --generate-config --y
 
     cat >> "$JUPYTER_CONFIG_FILE" <<EOF
 # --- Poppy configuration ---
