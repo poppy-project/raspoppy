@@ -10,6 +10,7 @@ install_conda()
     echo "export PATH=$HOME/miniconda/bin:$PATH" >> "$HOME/.bashrc"
     export PATH="$HOME/miniconda/bin:$PATH"
 
+    conda config --add channels rpi
     conda config --add channels poppy-project
     conda config --set show_channel_urls True
     conda config --set always_yes yes --set changeps1 no
