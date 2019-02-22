@@ -2,7 +2,7 @@
 
 creature=$1
 hostname=$2
-snap_version="4.1.0.4"
+snap_version="4.2.2.9"
 puppet_master_branch="1.0.1"
 
 export PATH="$HOME/miniconda/bin:$PATH"
@@ -99,7 +99,7 @@ install_snap()
         wget "https://github.com/jmoenig/Snap--Build-Your-Own-Blocks/archive/$snap_version.zip" -O "$snap_version.zip"
         unzip "$snap_version.zip"
         rm "$snap_version.zip"
-        mv "Snap--Build-Your-Own-Blocks-$snap_version" snap
+        mv "Snap-$snap_version" snap
 
         pypot_root=$(python -c "import pypot, os; print(os.path.dirname(pypot.__file__))")
 
