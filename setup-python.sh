@@ -21,6 +21,7 @@ install_conda()
 install_python_packages()
 {
     conda install numpy scipy jupyter matplotlib explauto
+    conda install tornado=4.5.3
 }
 
 configure_jupyter()
