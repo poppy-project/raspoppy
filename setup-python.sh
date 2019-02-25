@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
+username=$1
+
 install_conda()
 {
     cd || exit
     wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-armv7l.sh -O Miniconda-latest-Linux-armv7l.sh
-    bash Miniconda-latest-Linux-armv7l.sh -b
+    sudo -u "$username" bash Miniconda-latest-Linux-armv7l.sh -b
     rm Miniconda-latest-Linux-armv7l.sh
 
     echo "export PATH=$HOME/miniconda/bin:$PATH" >> "$HOME/.bashrc"
@@ -15,11 +17,13 @@ install_conda()
     conda config --set always_yes yes --set changeps1 no
 
     conda update conda
+    
 }
 
 install_python_packages()
 {
     conda install numpy scipy jupyter matplotlib explauto
+    conda install tornado=4.5.3
 }
 
 configure_jupyter()
