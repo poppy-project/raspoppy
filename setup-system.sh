@@ -1,7 +1,13 @@
 #!/usr/bin/env bash
 
+# 2020/02/13 version modified by JLC for Raspbian buster & RPi4 
+#
+# install_custom_raspiconfig() seems to be obsolete for Raspbian buster on RPi4
+# use $(hrpi-version) to do conditional process for rpi-3, rpi-4 and buster
+
 username=$1
 password=$2
+git_branch=${3:-"master"}
 
 install_custom_raspiconfig()
 {
@@ -40,16 +46,38 @@ system_setup()
     sudo sed -i 's/^#\s*\(fr_FR.UTF-8 UTF-8\)/\1/g' /etc/locale.gengroups
     sudo locale-gen
 
-    echo -e "\e[33mEnable camera.\e[0m"
-    echo "start_x=1" | sudo tee --append /boot/config.txt
-    echo "bcm2835-v4l2" | sudo tee /etc/modules-load.d/bcm2835-v4l2.conf
+    #JLC: don't know if the stuff bellow must be done with RPi4 under RaspBian buster ?
+    #JLC: => anyway it can always be done by typing "sudo raspi-config" in aterminal !
+    
+    if [ "$(hrpi-version)" = "rpi-3" ]; then
+	    echo -e "\e[33mEnable camera.\e[0m"
+    	echo "start_x=1" | sudo tee --append /boot/config.txt
+    	echo "bcm2835-v4l2" | sudo tee /etc/modules-load.d/bcm2835-v4l2.conf
 
-    echo -e "\e[33mSetup serial communication.\e[0m"
-    sudo raspi-config --disable-serial-log
-    sudo tee --append /boot/config.txt > /dev/null <<EOF
+    	echo -e "\e[33mSetup serial communication.\e[0m"
+    	sudo raspi-config --disable-serial-log
+    	sudo tee --append /boot/config.txt > /dev/null <<EOF
 init_uart_clock=16000000
 dtoverlay=pi3-miniuart-bt
 EOF
+     fi
+}
+
+install_additional_packages()
+{
+    sudo apt-get update && sudo apt upgrade -y && sudo apt autoremove -y    
+    # added python3-venev & libatalas-base-dev for RaspBian buster:
+    # removed samba* & dhcpcd, added libhdf5-dev libhdf5-serial-dev libjasper-dev for opencv
+    sudo apt-get install -y \
+        build-essential unzip whois \
+        network-manager git avahi-autoipd avahi-utils \
+        libxslt-dev python3-venv libatlas-base-dev \
+	    libhdf5-dev libhdf5-serial-dev libjasper-dev libqtgui4 libqt4-test
+
+    # board version utility
+    # hrpi-version compatible with rpi-3 & rpi-4 is replaced by the new version included in the zip file
+    sudo cp hrpi-version-2.sh /usr/bin/hrpi-version
+    sudo chmod +x /usr/bin/hrpi-version
 }
 
 install_additional_packages()
@@ -99,7 +127,7 @@ EOF
 <?xml version="1.0" standalone='no'?>
 <!DOCTYPE service-group SYSTEM "avahi-service.dtd">
 <service-group>
-  <name replace-wildcards="yes">poppy-ergo-jr on %h</name>
+  <name replace-wildcards="yes">poppy on %h</name>
   <service>
     <type>_poppy-robot._tcp</type>
     <port>9</port>
@@ -116,8 +144,11 @@ EOF
 EOF
 }
 
-install_custom_raspiconfig
+# install_additional_packages is run first to make hrpi-version available:
 install_additional_packages
+if [ "$(hrpi-version)" = "rpi-3" ]; then
+    install_custom_raspiconfig
+fi
 setup_user "$username" "$password"
 system_setup
 setup_network_tools
