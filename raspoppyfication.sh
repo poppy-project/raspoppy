@@ -16,7 +16,7 @@ function usage() {
   echo "  --password           Set password for the Poppy user (default: poppy)"
   echo "  --hostname           Set the robot hostname (default: poppy)"
   echo "  --branch             Install from a given git branch (default: master)"
-  echo "  --shutdown           Shutdown the system after installation"
+  echo "  --reboot             Reboot the system after installation"
   echo "  -?|--help            Show this help"
   echo ""
   echo "Example usage:"
@@ -54,8 +54,8 @@ case $i in
   git_branch="${i#*=}"
   shift
   ;;
-  -s|--shutdown)
-  shutdown_after_install=1
+  -s|--reboot)
+  reboot_after_install=1
   shift
   ;;
 esac
@@ -66,7 +66,7 @@ poppy_username=${poppy_username:-"poppy"}
 poppy_password=${poppy_password:-"poppy"}
 poppy_hostname=${poppy_hostname:-"poppy"}
 git_branch=${git_branch:-"master"}
-shutdown_after_install=${shutdown_after_install:-0}
+reboot_after_install=${reboot_after_install:-0}
 
 url_root="https://raw.githubusercontent.com/poppy-project/raspoppy/$git_branch"
 
@@ -87,6 +87,6 @@ bash setup-hotspot.sh
 echo -e "\e[33mChange hostname to \e[4m$poppy_hostname.\e[0m"
 sudo raspi-config --change-hostname "$poppy_hostname"
 
-if [ $shutdown_after_install -eq 1 ]; then
-  sudo shutdown -h now
+if [ $reboot_after_install -eq 1 ]; then
+  sudo reboot
 fi
