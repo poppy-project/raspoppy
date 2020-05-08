@@ -1,26 +1,29 @@
 #!/usr/bin/env bash
+ 
+#version modified by JLC for RPi4 2020/02/13
 
-install_conda()
+
+create_virtual_python_env()
 {
-    cd || exit
-    wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-armv7l.sh -O Miniconda-latest-Linux-armv7l.sh
-    bash Miniconda-latest-Linux-armv7l.sh -b
-    rm Miniconda-latest-Linux-armv7l.sh
+    echo "creating a virtual python env for $USER in $HOME/pyenv"
+    if [[ -d "$HOME/pyenv" ]]; then
+	    echo -e "\tvirtual python env already exists in $HOME/pyenv"
+    else
+	    python3 -m venv $HOME/pyenv
+    fi
+    #JLC: activate python environnement pyenv in poppy's .bashrc:
+    if ! grep -q '^source $HOME/pyenv/bin/activate$' $HOME/.bashrc; then
+    	echo "activating pyenv in poppy .bashrc"
+    	echo 'source $HOME/pyenv/bin/activate' >> $HOME/.bashrc
+    fi
 
-    echo "export PATH=$HOME/miniconda/bin:$PATH" >> "$HOME/.bashrc"
-    export PATH="$HOME/miniconda/bin:$PATH"
-
-    conda config --add channels rpi
-    conda config --add channels poppy-project
-    conda config --set show_channel_urls True
-    conda config --set always_yes yes --set changeps1 no
-
-    conda update conda
 }
 
 install_python_packages()
 {
-    conda install numpy scipy jupyter matplotlib explauto
+    source $HOME/pyenv/bin/activate && pip install \
+    	numpy scipy==1.3.1 jupyter matplotlib explauto wheel pillow \
+    	opencv-contrib-python==4.1.0.25 
 }
 
 configure_jupyter()
@@ -30,7 +33,7 @@ configure_jupyter()
 
     mkdir -p "$JUPTER_NOTEBOOK_FOLDER"
 
-    jupyter notebook --generate-config --y
+    source $HOME/pyenv/bin/activate && jupyter notebook --generate-config --y
 
     cat >> "$JUPYTER_CONFIG_FILE" <<EOF
 # --- Poppy configuration ---
@@ -45,7 +48,7 @@ c.NotebookApp.password = ''
 # --- Poppy configuration ---
 EOF
 
-  JUPYTER_CUSTOM_JS_FILE=$HOME/.jupyter/custom/custom.js
+JUPYTER_CUSTOM_JS_FILE=$HOME/.jupyter/custom/custom.js
   mkdir -p "$HOME/.jupyter/custom"
   cat > "$JUPYTER_CUSTOM_JS_FILE" <<EOF
 /* Allow new tab to be openned in an iframe */
@@ -54,17 +57,15 @@ define(['base/js/namespace'], function(Jupyter){
 })
 EOF
 
-    python -c """
+    source $HOME/pyenv/bin/activate && python -c """
 import os
-
 from jupyter_core.paths import jupyter_data_dir
-
 d = jupyter_data_dir()
 if not os.path.exists(d):
     os.makedirs(d)
 """
 
-    pip install https://github.com/ipython-contrib/IPython-notebook-extensions/archive/master.zip
+    source $HOME/pyenv/bin/activate && pip install https://github.com/ipython-contrib/IPython-notebook-extensions/archive/master.zip
 }
 
 autostart_jupyter()
@@ -74,16 +75,14 @@ autostart_jupyter()
 Description=Jupyter notebook
 Wants=network-online.target
 After=network.target network-online.target
-
 [Service]
-PIDFile=/var/run/jupyter-notebook.pid
+PIDFile=/run/jupyter-notebook.pid
 Environment="PATH=$PATH"
-ExecStart=$HOME/miniconda/bin/jupyter notebook
+ExecStart=$HOME/pyenv/bin/jupyter notebook
 User=poppy
 Group=poppy
 WorkingDirectory=$JUPTER_NOTEBOOK_FOLDER
 Type=simple
-
 [Install]
 WantedBy=multi-user.target
 EOF
@@ -91,7 +90,7 @@ EOF
     sudo systemctl enable jupyter-notebook.service
 }
 
-install_conda
+create_virtual_python_env
 install_python_packages
 configure_jupyter
 autostart_jupyter
