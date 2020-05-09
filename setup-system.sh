@@ -72,32 +72,12 @@ install_additional_packages()
         build-essential unzip whois \
         network-manager git avahi-autoipd avahi-utils \
         libxslt-dev python3-venv libatlas-base-dev \
-	    libhdf5-dev libhdf5-serial-dev libjasper-dev libqtgui4 libqt4-test
+	libhdf5-dev libhdf5-serial-dev libjasper-dev libqtgui4 libqt4-test
 
     # board version utility
-    # hrpi-version compatible with rpi-3 & rpi-4 is replaced by the new version included in the zip file
-    sudo cp hrpi-version-2.sh /usr/bin/hrpi-version
+    # hrpi-version compatible with rpi-3 & rpi-4 is replaced by the new version included in the depository
+    sudo cp hrpi-version.sh /usr/bin/hrpi-version
     sudo chmod +x /usr/bin/hrpi-version
-}
-
-install_additional_packages()
-{
-    sudo apt-get update
-
-    sudo apt-get install -y \
-        build-essential unzip whois \
-        network-manager \
-        git \
-        samba samba-common avahi-autoipd avahi-utils \
-        libxslt-dev
-
-    # board version utility
-    wget https://github.com/damiencaselli/hrpi-version/archive/1.0.1.zip -O hrpi-version.zip
-    unzip hrpi-version.zip
-    sudo mv hrpi-version-1.0.1/usr/bin/hrpi-version.sh /usr/bin/hrpi-version
-    sudo chmod +x /usr/bin/hrpi-version
-    rm hrpi-version.zip
-    rm -rf hrpi-version-1.0.1
 }
 
 setup_network_tools()
