@@ -72,21 +72,21 @@ url_root="https://raw.githubusercontent.com/poppy-project/raspoppy/$git_branch"
 
 cd /tmp || exit
 wget "$url_root/setup-system.sh"
-bash setup-system.sh "$poppy_username" "$poppy_password" "$poppy_hostname"
+bash setup-system.sh "$poppy_username" "$poppy_password" "$poppy_hostname" $git_branch
 
 wget "$url_root/setup-python.sh"
-sudo -u "$poppy_username" bash setup-python.sh
+sudo -u "$poppy_username" bash setup-python.sh $git_branch
 
 wget "$url_root/setup-poppy.sh"
-sudo -u "$poppy_username" bash setup-poppy.sh "$poppy_creature" "$poppy_hostname"
+sudo -u "$poppy_username" bash -i setup-poppy.sh "$poppy_creature" "$poppy_hostname" $git_branch
 
 echo -e "\e[33mSetting hotspot.\e[0m"
 wget "$url_root/setup-hotspot.sh"
-bash setup-hotspot.sh
+bash setup-hotspot.sh $git_branch
 
 echo -e "\e[33mChange hostname to \e[4m$poppy_hostname.\e[0m"
 sudo raspi-config --change-hostname "$poppy_hostname"
 
 if [ $reboot_after_install -eq 1 ]; then
-  sudo reboot
+  reboot
 fi
