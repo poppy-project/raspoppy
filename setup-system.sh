@@ -79,6 +79,7 @@ install_additional_packages()
 
     # board version utility
     # hrpi-version compatible with rpi-3 & rpi-4 is replaced by the new version included in the depository
+    wget https://raw.githubusercontent.com/poppy-project/raspoppy/dev_gen2/hrpi-version.sh -O hrpi-version.sh
     sudo cp hrpi-version.sh /usr/bin/hrpi-version
     sudo chmod +x /usr/bin/hrpi-version
 }
