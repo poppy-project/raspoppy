@@ -22,6 +22,7 @@ print_env()
 
 install_poppy_libraries()
 {
+    pip install https://github.com/poppy-project/pypot/archive/${branch}.zip
     pip install "$creature"
 
     if [ -z "${POPPY_ROOT+x}" ]; then
