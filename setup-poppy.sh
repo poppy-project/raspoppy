@@ -1,16 +1,28 @@
 #!/usr/bin/env bash
 
+# Using a python virtual environnement at $HOME/pyenv insted of $HOME/miniconda
+# replace all "conda install" by "pip3 install"
+
 creature=$1
 hostname=$2
+branch=${3:-"master"}
+
 snap_version="4.1.0.4"
 puppet_master_branch="1.0.1"
 
-export PATH="$HOME/miniconda/bin:$PATH"
+export PATH="$HOME/pyenv/bin:$PATH"
+
+# activate the python virtual env for all the script
+source $HOME/pyenv/bin/activate
+
+print_env()
+{
+    env
+}
 
 install_poppy_libraries()
 {
-    conda install "$creature"
-
+    pip install "$creature"
 
     if [ -z "${POPPY_ROOT+x}" ]; then
         export POPPY_ROOT="$HOME/dev"
@@ -21,9 +33,8 @@ install_poppy_libraries()
     # Symlink Poppy Python packages to allow more easily to users to view and modify the code
     for repo in pypot $creature ; do
         # Replace - to _ (I don't like regex)
-        module=$(python -c "str = '$repo'; print str.replace('-','_')")
-
-        module_path=$(python -c "import $module, os; print os.path.dirname($module.__file__)")
+	module=$(python -c "str = '$repo'; print(str.replace('-','_'))")
+	module_path=$(python -c "import $module, os; print(os.path.dirname($module.__file__))")
         ln -s "$module_path" "$POPPY_ROOT"
     done
 }
@@ -38,30 +49,30 @@ populate_notebooks()
     pushd "$JUPTER_NOTEBOOK_FOLDER"
 
         if [ "$creature" == "poppy-humanoid" ]; then
-            curl -o Demo_interface.ipynb https://raw.githubusercontent.com/poppy-project/poppy-humanoid/master/software/samples/notebooks/Demo%20Interface.ipynb
+            repo=https://raw.githubusercontent.com/poppy-project/$creature/$branch
+            curl -o Demo_interface.ipynb $repo/software/samples/notebooks/Demo%20Interface.ipynb
+        elif [ "$creature" == "poppy-torso" ]; then
+            repo=https://raw.githubusercontent.com/poppy-project/$creature/$branch/software/samples/notebooks
+            curl -o "Discover your Poppy Torso.ipynb" $repo/Discover%20your%20Poppy%20Torso.ipynb
+            curl -o "Record, save and play moves on Poppy Torso.ipynb" $repo/Record%2C%20Save%20and%20Play%20Moves%20on%20Poppy%20Torso.ipynb
+            mkdir -p images
+            pushd images
+              wget $repo/images/poppy_torso.jpg -O poppy_torso.jpg
+              wget $repo/images/poppy_torso_motors.png -O poppy_torso_motors.png
+            popd
+        elif [ "$creature" == "poppy-ergo-jr" ]; then
+            repo=https://raw.githubusercontent.com/poppy-project/$creature/$branch/software/samples/notebooks
+            curl -o "Discover your Poppy Ergo Jr.ipynb" $repo/Discover%20your%20Poppy%20Ergo%20Jr.ipynb
+            curl -o "Record, save and play moves on Poppy Ergo Jr.ipynb" $repo/Record%2C%20Save%20and%20Play%20Moves%20on%20Poppy%20Ergo%20Jr.ipynb
         fi
-        if [ "$creature" == "poppy-torso" ]; then
-          curl -o "Discover your Poppy Torso.ipynb" https://raw.githubusercontent.com/poppy-project/poppy-torso/master/software/samples/notebooks/Discover%20your%20Poppy%20Torso.ipynb
-          curl -o "Record, save and play moves on Poppy Torso.ipynb" https://raw.githubusercontent.com/poppy-project/poppy-torso/master/software/samples/notebooks/Record%2C%20Save%20and%20Play%20Moves%20on%20Poppy%20Torso.ipynb
-
-          mkdir -p images
-          pushd images
-            wget https://raw.githubusercontent.com/poppy-project/poppy-torso/master/software/samples/notebooks/images/poppy_torso.jpg -O poppy_torso.jpg
-            wget https://raw.githubusercontent.com/poppy-project/poppy-torso/master/software/samples/notebooks/images/poppy_torso_motors.png -O poppy_torso_motors.png
-          popd
-        fi
-        if [ "$creature" == "poppy-ergo-jr" ]; then
-            curl -o "Discover your Poppy Ergo Jr.ipynb" https://raw.githubusercontent.com/poppy-project/poppy-ergo-jr/master/software/samples/notebooks/Discover%20your%20Poppy%20Ergo%20Jr.ipynb
-            curl -o "Record, save and play moves on Poppy Ergo Jr.ipynb" https://raw.githubusercontent.com/poppy-project/poppy-ergo-jr/master/software/samples/notebooks/Record%2C%20Save%20and%20Play%20Moves%20on%20Poppy%20Ergo%20Jr.ipynb
-        fi
-
-        curl -o "Benchmark your Poppy robot.ipynb" https://raw.githubusercontent.com/poppy-project/pypot/master/samples/notebooks/Benchmark%20your%20Poppy%20robot.ipynb
+        repo=https://raw.githubusercontent.com/poppy-project/pypot/$branch/samples/notebooks
+        curl -o "Benchmark your Poppy robot.ipynb" $repo/Benchmark%20your%20Poppy%20robot.ipynb
 
         # Download community notebooks
         wget https://github.com/poppy-project/community-notebooks/archive/master.zip -O master.zip
         unzip master.zip
         mv community-notebooks-master community-notebooks
-        rm master.zip
+        rm -f master.zip
 
         # Copy the documentation pdf
         wget https://www.gitbook.com/download/pdf/book/poppy-project/poppy-docs?lang=en -O documentation.pdf
@@ -80,12 +91,11 @@ setup_puppet_master()
     pushd "$POPPY_ROOT"
         wget -O puppet-master.zip "https://github.com/poppy-project/puppet-master/archive/${puppet_master_branch}.zip"
         unzip puppet-master.zip
-        rm puppet-master.zip
+        rm -f puppet-master.zip
         mv "puppet-master-${puppet_master_branch}" puppet-master
 
         pushd puppet-master
-            conda install flask pyyaml requests
-
+            pip install flask pyyaml requests
             python bootstrap.py "$hostname" "$creature"
             install_snap "$(pwd)"
         popd
@@ -96,15 +106,15 @@ setup_puppet_master()
 install_snap()
 {
     pushd "$1"
-        wget "https://github.com/jmoenig/Snap--Build-Your-Own-Blocks/archive/$snap_version.zip" -O "$snap_version.zip"
-        unzip "$snap_version.zip"
-        rm "$snap_version.zip"
-        mv "Snap--Build-Your-Own-Blocks-$snap_version" snap
+        wget "https://github.com/jmoenig/Snap--Build-Your-Own-Blocks/archive/${snap_version}.zip" -O "${snap_version}.zip"
+        unzip "${snap_version}.zip"
+        rm -f "${snap_version}.zip"
+        mv "Snap-$snap_version" snap
 
         pypot_root=$(python -c "import pypot, os; print(os.path.dirname(pypot.__file__))")
 
         # Delete snap default examples
-        rm snap/Examples/EXAMPLES
+        rm -rf snap/Examples/EXAMPLES 
 
         # Snap projects are dynamicaly modified and copied on a local folder for acces rights issues
         # This snap_local_folder is defined depending the OS in pypot.server.snap.get_snap_user_projects_directory()
@@ -117,18 +127,15 @@ install_snap()
             filename=$(basename "$project")
             cp "$project" "$snap_local_folder/"
             ln -s "$snap_local_folder/$filename" snap/Examples/
-
             echo -e "$filename\t$filename" >> snap/Examples/EXAMPLES
         done
-
 
         ln -s "$snap_local_folder/pypot-snap-blocks.xml" snap/libraries/poppy.xml
         echo -e "poppy.xml\tPoppy robots" >> snap/libraries/LIBRARIES
 
-
         wget https://github.com/poppy-project/poppy-monitor/archive/master.zip -O master.zip
         unzip master.zip
-        rm master.zip
+        rm -f master.zip
         mv poppy-monitor-master monitor
     popd
 }
@@ -147,16 +154,14 @@ autostartup_webinterface()
 Description=Puppet Master service
 Wants=network-online.target
 After=network.target network-online.target
-
 [Service]
-PIDFile=/var/run/puppet-master.pid
+PIDFile=/run/puppet-master.pid
 Environment="PATH=$PATH"
-ExecStart=$HOME/miniconda/bin/python bouteillederouge.py
+ExecStart=source $HOME/pyenv/bin/activate && python bouteillederouge.py
 User=poppy
 Group=poppy
 WorkingDirectory=$POPPY_ROOT/puppet-master
 Type=simple
-
 [Install]
 WantedBy=multi-user.target
 EOF
@@ -175,21 +180,15 @@ redirect_port80_webinterface()
 setup_update()
 {
     cd || exit
-    wget https://raw.githubusercontent.com/poppy-project/raspoppy/master/poppy-update.sh -O "$HOME/.poppy-update.sh"
+    wget https://raw.githubusercontent.com/poppy-project/raspoppy/$branch/poppy-update.sh -O "$HOME/.poppy-update.sh"
 
     cat > poppy-update << EOF
-#!/usr/bin/env python
-
+#$HOME/pyenv/bin/python
 import os
 import yaml
-
 from subprocess import call
-
-
 with open(os.path.expanduser('~/.poppy_config.yaml')) as f:
     config = yaml.load(f)
-
-
 with open(config['update']['logfile'], 'w') as f:
     call(['bash', os.path.expanduser('~/.poppy-update.sh'),
           config['update']['url'],
@@ -197,7 +196,7 @@ with open(config['update']['logfile'], 'w') as f:
           config['update']['lockfile']], stdout=f, stderr=f)
 EOF
     chmod +x poppy-update
-    mv poppy-update "$HOME/miniconda/bin/"
+    mv poppy-update "$HOME/pyenv/bin/"
 }
 
 
