@@ -2,19 +2,22 @@
 
 # 2020/02/13 version modified by JLC for Raspbian buster & RPi4 
 #
-# install_custom_raspiconfig() seems to be obsolete for Raspbian buster on RPi4
 # use $(hrpi-version) to do conditional process for rpi-3, rpi-4 and buster
+# install_custom_raspiconfig() only for RPi3
 
 username=$1
 password=$2
-git_branch=${3:-"master"}
+creature=$3
+git_branch=${4:-"master"}
 
 install_custom_raspiconfig()
 {
-    wget https://raw.githubusercontent.com/poppy-project/raspi-config/master/raspi-config
-    chmod +x raspi-config
-    sudo chown root:root raspi-config
-    sudo mv raspi-config /usr/bin/
+    if [ "$(hrpi-version)" = "rpi-3" ]; then
+        wget https://raw.githubusercontent.com/poppy-project/raspi-config/master/raspi-config
+        chmod +x raspi-config
+        sudo chown root:root raspi-config
+        sudo mv raspi-config /usr/bin/
+    fi
 }
 
 setup_user()
@@ -49,8 +52,8 @@ system_setup()
     #JLC: don't know if the stuff bellow must be done with RPi4 under RaspBian buster ?
     #JLC: => anyway it can always be done by typing "sudo raspi-config" in aterminal !
     
-    if [ "$(hrpi-version)" = "rpi-3" ]; then
-	    echo -e "\e[33mEnable camera.\e[0m"
+    if [ "$creature" = "poppy-ergo-jr" -a "$(hrpi-version)" = "rpi-3"  ]; then
+	echo -e "\e[33mEnable camera.\e[0m"
     	echo "start_x=1" | sudo tee --append /boot/config.txt
     	echo "bcm2835-v4l2" | sudo tee /etc/modules-load.d/bcm2835-v4l2.conf
 
@@ -126,9 +129,8 @@ EOF
 
 # install_additional_packages is run first to make hrpi-version available:
 install_additional_packages
-if [ "$(hrpi-version)" = "rpi-3" ]; then
-    install_custom_raspiconfig
-fi
+install_custom_raspiconfig
 setup_user "$username" "$password"
 system_setup
 setup_network_tools
+

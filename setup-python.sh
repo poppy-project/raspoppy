@@ -2,11 +2,12 @@
  
 #version modified by JLC for RPi4 2020/02/13
 
+git_branch=$1
 
 create_virtual_python_env()
 {
     echo "creating a virtual python env for $USER in $HOME/pyenv"
-    if [[ -d "$HOME/pyenv" ]]; then
+    if [ -d "$HOME/pyenv" ]; then
 	    echo -e "\tvirtual python env already exists in $HOME/pyenv"
     else
 	    python3 -m venv $HOME/pyenv
@@ -16,7 +17,6 @@ create_virtual_python_env()
     	echo "activating pyenv in poppy .bashrc"
     	echo 'source $HOME/pyenv/bin/activate' >> $HOME/.bashrc
     fi
-
 }
 
 install_python_packages()
@@ -78,7 +78,7 @@ After=network.target network-online.target
 [Service]
 PIDFile=/run/jupyter-notebook.pid
 Environment="PATH=$PATH"
-ExecStart=$HOME/pyenv/bin/jupyter notebook
+ExecStart=source $HOME/pyenv/bin/activate && jupyter notebook
 User=poppy
 Group=poppy
 WorkingDirectory=$JUPTER_NOTEBOOK_FOLDER
@@ -94,3 +94,4 @@ create_virtual_python_env
 install_python_packages
 configure_jupyter
 autostart_jupyter
+

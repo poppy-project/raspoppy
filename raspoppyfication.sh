@@ -72,7 +72,7 @@ url_root="https://raw.githubusercontent.com/poppy-project/raspoppy/$git_branch"
 
 cd /tmp || exit
 wget "$url_root/setup-system.sh"
-bash setup-system.sh "$poppy_username" "$poppy_password" "$poppy_hostname" $git_branch
+bash setup-system.sh "$poppy_username" "$poppy_password" "$poppy_creature" $git_branch
 
 wget "$url_root/setup-python.sh"
 sudo -u "$poppy_username" bash setup-python.sh $git_branch
@@ -90,3 +90,4 @@ sudo raspi-config --change-hostname "$poppy_hostname"
 if [ $reboot_after_install -eq 1 ]; then
   reboot
 fi
+
