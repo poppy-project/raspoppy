@@ -158,7 +158,7 @@ After=network.target network-online.target
 [Service]
 PIDFile=/run/puppet-master.pid
 Environment="PATH=$PATH"
-ExecStart=source $HOME/pyenv/bin/activate && python bouteillederouge.py
+ExecStart=$HOME/pyenv/bin/python bouteillederouge.py
 User=poppy
 Group=poppy
 WorkingDirectory=$POPPY_ROOT/puppet-master

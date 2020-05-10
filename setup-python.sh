@@ -78,7 +78,7 @@ After=network.target network-online.target
 [Service]
 PIDFile=/run/jupyter-notebook.pid
 Environment="PATH=$PATH"
-ExecStart=source $HOME/pyenv/bin/activate && jupyter notebook
+ExecStart=$HOME/pyenv/bin/jupyter notebook
 User=poppy
 Group=poppy
 WorkingDirectory=$JUPTER_NOTEBOOK_FOLDER
