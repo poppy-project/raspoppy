@@ -144,8 +144,8 @@ setup_documents()
         echo -e "create symlink"
 
         ln -s "$POPPY_ROOT" Poppy\ Source-code
-        ln -s "$POPPY_ROOT/poppy-docs/La Documentation.pdf" La\ Documentation.pdf
-        ln -s "$POPPY_ROOT/poppy-docs/The Documentation.pdf" The\ Documentation.pdf
+        #ln -s "$POPPY_ROOT/poppy-docs/La Documentation.pdf" La\ Documentation.pdf
+        #ln -s "$POPPY_ROOT/poppy-docs/The Documentation.pdf" The\ Documentation.pdf
 
         mkdir -p "$POPPY_ROOT/puppet-master/moves"
         sed -i 's/self.moves_path=""/self.moves_path="moves\/"/' $POPPY_ROOT/pypot/server/rest.py
@@ -155,7 +155,7 @@ setup_documents()
         name=$(python -c "str = '$creature'; print(str.replace('-','_'))")
         ln -s "$POPPY_ROOT/$name/primitives" Robot\ primitives
         pushd Robot\ primitives
-            ln -s "$POPPY_ROOT/$name/$name.py" Robot_init.py
+            ln -s "$POPPY_ROOT/$name/$name.py" _shortcut_to_Robot_init.py
         popd
 
         echo -e "symlink done"

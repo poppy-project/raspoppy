@@ -26,7 +26,7 @@ setup_user()
     username=$1
     password=$2
 
-    echo -e "\e[33m Create a user \e[4m $username. \e[0m"
+    echo -e "\e[33m Create a user \e[4m$username\e[0m"
 
     pass=$(perl -e 'print crypt($ARGV[0], "password")' "$password")
     sudo useradd -m -p "$pass" -s /bin/bash "$username"
@@ -42,7 +42,7 @@ setup_user()
 system_setup()
 {
     # Change password for pi user
-    echo -e "\e[33m Change password for pi user. \e[0m"
+    echo -e "\e[33m Change password for pi user \e[0m"
     sudo usermod -p "$(mkpasswd --method=sha-512 raspoppy)" pi
 
     # Add more langs (GB, US, FR)
@@ -55,11 +55,11 @@ system_setup()
     #JLC: => anyway it can always be done by typing "sudo raspi-config" in aterminal !
     
     if [ "$creature" = "poppy-ergo-jr" -a "$(hrpi-version)" = "rpi-3"  ]; then
-        echo -e "\e[33m Enable camera. \e[0m"
+        echo -e "\e[33m Enable camera \e[0m"
         echo "start_x=1" | sudo tee --append /boot/config.txt
         echo "bcm2835-v4l2" | sudo tee /etc/modules-load.d/bcm2835-v4l2.conf
 
-        echo -e "\e[33m Setup serial communication. \e[0m"
+        echo -e "\e[33m Setup serial communication \e[0m"
         sudo raspi-config --disable-serial-log
         sudo tee --append /boot/config.txt > /dev/null <<EOF
 init_uart_clock=16000000
@@ -70,18 +70,20 @@ EOF
 
 install_additional_packages()
 {
-    echo -e "\e[33m install_additional_packages \e[0m"
+    echo -e "\e[33m upgrade_systeme \e[0m"
     sudo apt-get update && sudo apt upgrade -y && sudo apt autoremove -y    
     # added python3-venev & libatalas-base-dev for RaspBian buster:
     # removed samba* & dhcpcd, added libhdf5-dev libhdf5-serial-dev libjasper-dev for opencv
+    echo -e "\e[33m install_additional_packages \e[0m"
     sudo apt-get install -y \
         build-essential unzip whois \
         network-manager git avahi-autoipd avahi-utils \
         libxslt-dev python3-venv libatlas-base-dev \
-	libhdf5-dev libhdf5-serial-dev libjasper-dev libqtgui4 libqt4-test
+        libhdf5-dev libhdf5-serial-dev libjasper-dev libqtgui4 libqt4-test
 
     # board version utility
     # hrpi-version compatible with rpi-3 & rpi-4 is replaced by the new version included in the depository
+    echo -e "\e[33m board_version_utility \e[0m"
     wget https://raw.githubusercontent.com/poppy-project/raspoppy/dev_gen2/hrpi-version.sh -O hrpi-version.sh
     sudo cp hrpi-version.sh /usr/bin/hrpi-version
     sudo chmod +x /usr/bin/hrpi-version
