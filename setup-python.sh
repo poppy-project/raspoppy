@@ -6,7 +6,7 @@ git_branch=$1
 
 create_virtual_python_env()
 {
-    echo "creating a virtual python env for $USER in $HOME/pyenv"
+    echo -e "\e[33m Creating a virtual python env for $USER in $HOME/pyenv \e[0m"
     if [ -d "$HOME/pyenv" ]; then
 	    echo -e "\tvirtual python env already exists in $HOME/pyenv"
     else
@@ -21,6 +21,7 @@ create_virtual_python_env()
 
 install_python_packages()
 {
+    echo -e "\e[33m install_python_packages \e[0m"
     source $HOME/pyenv/bin/activate && pip install \
     	numpy scipy==1.3.1 pyzmq==17.1 jupyter matplotlib explauto wheel pillow \
     	opencv-contrib-python==4.1.0.25 
@@ -28,18 +29,21 @@ install_python_packages()
 
 configure_jupyter()
 {
+    echo -e "\e[33m configure_jupyter \e[0m"
     JUPYTER_CONFIG_FILE=$HOME/.jupyter/jupyter_notebook_config.py
-    export JUPTER_FOLDER=$HOME/Jupiter_root
+    export JUPYTER_FOLDER=$HOME/Jupyter_root
 
-    mkdir -p "$JUPTER_FOLDER"
+    echo -e "set Jupyter folder to $JUPYTER_FOLDER"
+    mkdir -p "$JUPYTER_FOLDER"
 
     source $HOME/pyenv/bin/activate && jupyter notebook --generate-config --y
 
+    echo -e "set Jupyter config file"
     cat >> "$JUPYTER_CONFIG_FILE" <<EOF
 # --- Poppy configuration ---
 c.NotebookApp.ip = '*'
 c.NotebookApp.open_browser = False
-c.NotebookApp.notebook_dir = '$JUPTER_FOLDER'
+c.NotebookApp.notebook_dir = '$JUPYTER_FOLDER'
 c.NotebookApp.tornado_settings = {'headers': {'Content-Security-Policy': "frame-ancestors 'self' *"}}
 c.NotebookApp.allow_origin = '*'
 c.NotebookApp.extra_static_paths = ["static/custom/custom.js"]
@@ -70,6 +74,7 @@ if not os.path.exists(d):
 
 autostart_jupyter()
 {
+    echo -e "\e[33m autostart_jupyter \e[0m"
     sudo tee /etc/systemd/system/jupyter-notebook.service > /dev/null <<EOF
 [Unit]
 Description=Jupyter notebook
@@ -81,7 +86,7 @@ Environment="PATH=$PATH"
 ExecStart=$HOME/pyenv/bin/jupyter notebook
 User=poppy
 Group=poppy
-WorkingDirectory=$JUPTER_FOLDER
+WorkingDirectory=$JUPYTER_FOLDER
 Type=simple
 [Install]
 WantedBy=multi-user.target

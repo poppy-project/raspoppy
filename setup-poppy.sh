@@ -135,12 +135,12 @@ build_documentation()
 setup_documents()
 {
     echo -e "\e[33m setup_documents \e[0m"
-    if [ -z "${JUPTER_FOLDER+x}" ]; then
-        JUPTER_FOLDER="$HOME/Jupiter_root"
-        mkdir -p "$JUPTER_FOLDER"
+    if [ -z "${JUPYTER_FOLDER+x}" ]; then
+        JUPYTER_FOLDER="$HOME/Jupyter_root"
+        mkdir -p "$JUPYTER_FOLDER"
     fi
-    mkdir -p "$JUPTER_FOLDER/My Documents"
-    pushd "$JUPTER_FOLDER/My Documents"
+    mkdir -p "$JUPYTER_FOLDER/My Documents"
+    pushd "$JUPYTER_FOLDER/My Documents"
         echo -e "create symlink"
 
         ln -s "$POPPY_ROOT" Poppy\ Source-code

@@ -15,7 +15,7 @@ rm -f rpi3-hotspot.zip
 rm -rf rpi3-hotspot
 
 tee /boot/hotspot.txt <<EOF
-ssid=Poppy Hotspot
+ssid=Poppy-Hotspot
 passphrase=poppyproject
 EOF
 
