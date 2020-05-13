@@ -48,7 +48,7 @@ system_setup()
     # Add more langs (GB, US, FR)
     sudo sed -i 's/^#\s*\(en_GB.UTF-8 UTF-8\)/\1/g' /etc/locale.gen
     sudo sed -i 's/^#\s*\(en_US.UTF-8 UTF-8\)/\1/g' /etc/locale.gen
-    sudo sed -i 's/^#\s*\(fr_FR.UTF-8 UTF-8\)/\1/g' /etc/locale.gengroups
+    sudo sed -i 's/^#\s*\(fr_FR.UTF-8 UTF-8\)/\1/g' /etc/locale.gengroups #TODO BUG /etc/locale.gengroups: No such file or directory
     sudo locale-gen
 
     #JLC: don't know if the stuff bellow must be done with RPi4 under RaspBian buster ?
@@ -93,8 +93,8 @@ setup_network_tools()
 {
     echo -e "\e[33m setup_network_tools \e[0m"
     # samba
-    sudo sed -i 's/map to guest = .*/map to guest = never/g' /etc/samba/smb.conf
-    (echo "poppy"; echo "poppy") | sudo smbpasswd -s -a poppy
+    sudo sed -i 's/map to guest = .*/map to guest = never/g' /etc/samba/smb.conf #TODO BUG /etc/samba/smb.conf: No such file or directory
+    (echo "poppy"; echo "poppy") | sudo smbpasswd -s -a poppy #TODO BUG smbpasswd: command not found
 
     # avahi services
     sudo tee /etc/avahi/services/ssh.service <<EOF
