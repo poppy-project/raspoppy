@@ -38,7 +38,6 @@ configure_jupyter()
 
     source $HOME/pyenv/bin/activate && jupyter notebook --generate-config --y
 
-    echo -e "set Jupyter config file"
     cat >> "$JUPYTER_CONFIG_FILE" <<EOF
 # --- Poppy configuration ---
 c.NotebookApp.ip = '*'

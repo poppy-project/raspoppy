@@ -212,10 +212,10 @@ get_notebooks()
         curl -o "Benchmark your Poppy robot.ipynb" $repo/Benchmark%20your%20Poppy%20robot.ipynb
 
         # Download community notebooks
-        wget https://github.com/poppy-project/community-notebooks/archive/master.zip -O master.zip
-        unzip master.zip
+        wget https://github.com/poppy-project/community-notebooks/archive/master.zip -O notebooks.zip
+        unzip notebooks.zip
+        rm -f notebooks.zip
         mv community-notebooks-master community-notebooks
-        rm -f master.zip
     popd
 }
 
