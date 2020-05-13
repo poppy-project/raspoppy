@@ -7,8 +7,10 @@ creature=$1
 hostname=$2
 branch=${3:-"master"}
 
-snap_version="4.1.0.4"
-puppet_master_branch="1.0.1"
+puppet_master_branch="$3"
+viewer_branch="_$3"
+monitor_branch="master"
+snap_version="5.4.5"
 
 export PATH="$HOME/pyenv/bin:$PATH"
 
@@ -22,7 +24,8 @@ print_env()
 
 install_poppy_libraries()
 {
-    pip install https://github.com/poppy-project/pypot/archive/${branch}.zip
+    echo -e "\e[33m install_poppy_libraries \e[0m"
+    pip install "https://github.com/poppy-project/pypot/archive/${branch}.zip"
     pip install "$creature"
 
     if [ -z "${POPPY_ROOT+x}" ]; then
@@ -34,21 +37,160 @@ install_poppy_libraries()
     # Symlink Poppy Python packages to allow more easily to users to view and modify the code
     for repo in pypot $creature ; do
         # Replace - to _ (I don't like regex)
-	module=$(python -c "str = '$repo'; print(str.replace('-','_'))")
-	module_path=$(python -c "import $module, os; print(os.path.dirname($module.__file__))")
+        module=$(python -c "str = '$repo'; print(str.replace('-','_'))")
+        module_path=$(python -c "import $module, os; print(os.path.dirname($module.__file__))")
         ln -s "$module_path" "$POPPY_ROOT"
     done
 }
 
-populate_notebooks()
+setup_puppet_master()
 {
-    if [ -z "${JUPTER_NOTEBOOK_FOLDER+x}" ]; then
-        JUPTER_NOTEBOOK_FOLDER="$HOME/notebooks"
+    echo -e "\e[33m setup_puppet_master \e[0m"
+    if [ -z "${POPPY_ROOT+x}" ]; then
+        export POPPY_ROOT="$HOME/dev"
+        mkdir -p "$POPPY_ROOT"
     fi
-    mkdir -p "$JUPTER_NOTEBOOK_FOLDER"
+    pushd "$POPPY_ROOT"
+        wget "https://github.com/poppy-project/puppet-master/archive/${puppet_master_branch}.zip" -O puppet-master.zip
+        unzip puppet-master.zip
+        rm -f puppet-master.zip
+        mv "puppet-master-${puppet_master_branch}" puppet-master
+        pushd puppet-master
+            pip install flask pyyaml requests
+            python bootstrap.py "$hostname" "$creature"
+        popd
 
-    pushd "$JUPTER_NOTEBOOK_FOLDER"
+        install_monitor
+        install_viewer
+        install_snap
+        build_documentation
+    popd
+}
 
+# Called from setup_puppet_master()
+install_monitor()
+{
+    echo -e "\e[33m setup_puppet_master: install_monitor \e[0m"
+    wget "https://github.com/poppy-project/poppy-monitor/archive/${monitor_branch}.zip" -O monitor.zip
+    unzip monitor.zip
+    rm -f monitor.zip
+    mv "poppy-monitor-${monitor_branch}" poppy-monitor
+}
+
+# Called from setup_puppet_master()
+install_viewer()
+{
+    echo -e "\e[33m setup_puppet_master: install_viewer \e[0m"
+    wget "https://github.com/poppy-project/poppy-simu/archive/gh-pages${viewer_branch}.zip" -O viewer.zip
+    unzip viewer.zip
+    rm -f viewer.zip
+    mv "poppy-simu-gh-pages${viewer_branch}" poppy-viewer
+}
+
+# Called from setup_puppet_master()
+install_snap()
+{
+    echo -e "\e[33m setup_puppet_master: install_snap \e[0m"
+    wget "https://github.com/jmoenig/Snap/archive/v${snap_version}.zip" -O snap.zip
+    unzip snap.zip
+    rm -f snap.zip
+    mv "Snap-${snap_version}" snap
+
+    #pypot_root=$(python -c "import pypot, os; print(os.path.dirname(pypot.__file__))")
+    pypot_root="$POPPY_ROOT/pypot"
+
+    # Delete snap default examples
+    rm -rf snap/Examples/EXAMPLES
+
+    # Snap projects are dynamicaly modified and copied on a local folder for acces rights issues
+    # This snap_local_folder is defined depending the OS in pypot.server.snap.get_snap_user_projects_directory()
+    snap_local_folder="$HOME/.local/share/pypot"
+    mkdir -p "$snap_local_folder"
+
+    # Link pypot Snap projets to Snap! Examples folder
+    for project in $pypot_root/server/snap_projects/*.xml; do
+        # Local file doesn"t exist yet if SnapRobotServer has not been started
+        filename=$(basename "$project")
+        cp "$project" "$snap_local_folder/"
+        ln -s "$snap_local_folder/$filename" snap/Examples/
+        echo -e "$filename\t$filename" >> snap/Examples/EXAMPLES
+    done
+
+    ln -s "$snap_local_folder/pypot-snap-blocks.xml" snap/libraries/poppy.xml
+    echo -e "poppy.xml\tPoppy robots" >> snap/libraries/LIBRARIES
+}
+
+# Called from setup_puppet_master()
+build_documentation()
+{
+    echo -e "\e[33m setup_puppet_master: build_documentation \e[0m"
+    #TODO add building >> https://github.com/poppy-project/poppy-docs#building-the-documentation-advanced-users
+    mkdir -p poppy-docs
+    pushd poppy-docs
+        wget https://www.gitbook.com/download/pdf/book/poppy-project/poppy-docs?lang=en -O The\ Documentation.pdf
+        wget https://www.gitbook.com/download/pdf/book/poppy-project/poppy-docs?lang=fr -O La\ Documentation.pdf
+    popd
+}
+
+setup_documents()
+{
+    echo -e "\e[33m setup_documents \e[0m"
+    if [ -z "${JUPTER_FOLDER+x}" ]; then
+        JUPTER_FOLDER="$HOME/Jupiter_root"
+        mkdir -p "$JUPTER_FOLDER"
+    fi
+    mkdir -p "$JUPTER_FOLDER/My Documents"
+    pushd "$JUPTER_FOLDER/My Documents"
+        echo -e "create symlink"
+
+        ln -s "$POPPY_ROOT" Poppy\ Source-code
+        ln -s "$POPPY_ROOT/poppy-docs/La Documentation.pdf" La\ Documentation.pdf
+        ln -s "$POPPY_ROOT/poppy-docs/The Documentation.pdf" The\ Documentation.pdf
+
+        mkdir -p "$POPPY_ROOT/puppet-master/moves"
+        sed -i 's/self.moves_path=""/self.moves_path="moves\/"/' $POPPY_ROOT/pypot/server/rest.py
+        sed -i 's/#os.makedirs(self.moves_path/os.makedirs(self.moves_path/' $POPPY_ROOT/pypot/server/rest.py
+        ln -s "$POPPY_ROOT/puppet-master/moves" Moves\ recorded
+
+        name=$(python -c "str = '$creature'; print(str.replace('-','_'))")
+        ln -s "$POPPY_ROOT/$name/primitives" Robot\ primitives
+        pushd Robot\ primitives
+            ln -s "$POPPY_ROOT/$name/$name.py" Robot_init.py
+        popd
+
+        echo -e "symlink done"
+
+        mkdir -p My\ Pictures
+
+        get_snap_project "Snap project"
+        get_notebooks "Python notebooks"
+    popd
+}
+
+# Called from setup_documents()
+get_snap_project()
+{
+    echo -e "\e[33m setup_documents: get_snap_project \e[0m"
+    mkdir -p "$1"
+    pushd "$1"
+        ln -s "$POPPY_ROOT/snap/help/SnapManual.pdf" Snap\ Documentation.pdf
+        ln -s "$POPPY_ROOT/snap/Examples" Snap\ codes
+        mkdir -p Snap\ activities
+        if [ "$creature" == "poppy-ergo-jr" ]; then
+            pushd Snap\ activities
+                wget https://hal.inria.fr/hal-01384649/document -O Livret\ pédagogique.pdf
+                #TODO make online repo with all activities and download here
+            popd
+        fi
+    popd
+}
+
+# Called from setup_documents()
+get_notebooks()
+{
+    echo -e "\e[33m setup_documents: get_notebooks \e[0m"
+    mkdir -p "$1"
+    pushd "$1"
         if [ "$creature" == "poppy-humanoid" ]; then
             repo=https://raw.githubusercontent.com/poppy-project/$creature/$branch
             curl -o Demo_interface.ipynb $repo/software/samples/notebooks/Demo%20Interface.ipynb
@@ -74,75 +216,13 @@ populate_notebooks()
         unzip master.zip
         mv community-notebooks-master community-notebooks
         rm -f master.zip
-
-        # Copy the documentation pdf
-        wget https://www.gitbook.com/download/pdf/book/poppy-project/poppy-docs?lang=en -O documentation.pdf
-
-        ln -s "$POPPY_ROOT" poppy_src
     popd
 }
 
-setup_puppet_master()
-{
-    if [ -z "${POPPY_ROOT+x}" ]; then
-        export POPPY_ROOT="$HOME/dev"
-        mkdir -p "$POPPY_ROOT"
-    fi
-
-    pushd "$POPPY_ROOT"
-        wget -O puppet-master.zip "https://github.com/poppy-project/puppet-master/archive/${puppet_master_branch}.zip"
-        unzip puppet-master.zip
-        rm -f puppet-master.zip
-        mv "puppet-master-${puppet_master_branch}" puppet-master
-
-        pushd puppet-master
-            pip install flask pyyaml requests
-            python bootstrap.py "$hostname" "$creature"
-            install_snap "$(pwd)"
-        popd
-    popd
-}
-
-# Called from setup_puppet_master()
-install_snap()
-{
-    pushd "$1"
-        wget "https://github.com/jmoenig/Snap--Build-Your-Own-Blocks/archive/${snap_version}.zip" -O "${snap_version}.zip"
-        unzip "${snap_version}.zip"
-        rm -f "${snap_version}.zip"
-        mv "Snap-$snap_version" snap
-
-        pypot_root=$(python -c "import pypot, os; print(os.path.dirname(pypot.__file__))")
-
-        # Delete snap default examples
-        rm -rf snap/Examples/EXAMPLES 
-
-        # Snap projects are dynamicaly modified and copied on a local folder for acces rights issues
-        # This snap_local_folder is defined depending the OS in pypot.server.snap.get_snap_user_projects_directory()
-        snap_local_folder="$HOME/.local/share/pypot"
-        mkdir -p "$snap_local_folder"
-
-        # Link pypot Snap projets to Snap! Examples folder
-        for project in $pypot_root/server/snap_projects/*.xml; do
-            # Local file doesn"t exist yet if SnapRobotServer has not been started
-            filename=$(basename "$project")
-            cp "$project" "$snap_local_folder/"
-            ln -s "$snap_local_folder/$filename" snap/Examples/
-            echo -e "$filename\t$filename" >> snap/Examples/EXAMPLES
-        done
-
-        ln -s "$snap_local_folder/pypot-snap-blocks.xml" snap/libraries/poppy.xml
-        echo -e "poppy.xml\tPoppy robots" >> snap/libraries/LIBRARIES
-
-        wget https://github.com/poppy-project/poppy-monitor/archive/master.zip -O master.zip
-        unzip master.zip
-        rm -f master.zip
-        mv poppy-monitor-master monitor
-    popd
-}
 
 autostartup_webinterface()
 {
+    echo -e "\e[33m autostartup_webinterface \e[0m"
     cd || exit
 
     if [ -z "${POPPY_ROOT+x}" ]; then
@@ -172,6 +252,7 @@ EOF
 
 redirect_port80_webinterface()
 {
+    echo -e "\e[33m redirect_port80_webinterface \e[0m"
     sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to 2280
     echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
     echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
@@ -180,8 +261,9 @@ redirect_port80_webinterface()
 
 setup_update()
 {
+    echo -e "\e[33m setup_update \e[0m"
     cd || exit
-    wget https://raw.githubusercontent.com/poppy-project/raspoppy/$branch/poppy-update.sh -O "$HOME/.poppy-update.sh"
+    wget "https://raw.githubusercontent.com/poppy-project/raspoppy/$branch/poppy-update.sh" -O "$HOME/.poppy-update.sh"
 
     cat > poppy-update << EOF
 #$HOME/pyenv/bin/python
@@ -203,15 +285,17 @@ EOF
 
 set_logo()
 {
+    echo -e "\e[33m set_logo \e[0m"
     wget https://raw.githubusercontent.com/poppy-project/raspoppy/master/poppy_logo -O "$HOME/.poppy_logo"
     # Remove old occurences of poppy_logo in .bashrc
     sed -i /poppy_logo/d "$HOME/.bashrc"
     echo cat "$HOME/.poppy_logo" >> "$HOME/.bashrc"
 }
 
+
 install_poppy_libraries
-populate_notebooks
 setup_puppet_master
+setup_documents
 autostartup_webinterface
 redirect_port80_webinterface
 setup_update

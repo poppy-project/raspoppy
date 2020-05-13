@@ -29,9 +29,9 @@ install_python_packages()
 configure_jupyter()
 {
     JUPYTER_CONFIG_FILE=$HOME/.jupyter/jupyter_notebook_config.py
-    export JUPTER_NOTEBOOK_FOLDER=$HOME/notebooks
+    export JUPTER_FOLDER=$HOME/Jupiter_root
 
-    mkdir -p "$JUPTER_NOTEBOOK_FOLDER"
+    mkdir -p "$JUPTER_FOLDER"
 
     source $HOME/pyenv/bin/activate && jupyter notebook --generate-config --y
 
@@ -39,7 +39,7 @@ configure_jupyter()
 # --- Poppy configuration ---
 c.NotebookApp.ip = '*'
 c.NotebookApp.open_browser = False
-c.NotebookApp.notebook_dir = '$JUPTER_NOTEBOOK_FOLDER'
+c.NotebookApp.notebook_dir = '$JUPTER_FOLDER'
 c.NotebookApp.tornado_settings = {'headers': {'Content-Security-Policy': "frame-ancestors 'self' *"}}
 c.NotebookApp.allow_origin = '*'
 c.NotebookApp.extra_static_paths = ["static/custom/custom.js"]
@@ -81,7 +81,7 @@ Environment="PATH=$PATH"
 ExecStart=$HOME/pyenv/bin/jupyter notebook
 User=poppy
 Group=poppy
-WorkingDirectory=$JUPTER_NOTEBOOK_FOLDER
+WorkingDirectory=$JUPTER_FOLDER
 Type=simple
 [Install]
 WantedBy=multi-user.target
