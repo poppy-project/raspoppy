@@ -7,7 +7,7 @@ creature=$1
 hostname=$2
 branch=${3:-"master"}
 
-hampy_branch="$3"
+hampy_branch="master"
 ikpy_branch="$3"
 poppy_creature_branch="master"
 
