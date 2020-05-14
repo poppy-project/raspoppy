@@ -158,9 +158,12 @@ setup_documents()
             ln -s "$POPPY_ROOT/$name/$name.py" _shortcut_to_Robot_init.py
         popd
 
-        echo -e "symlink done"
+        mkdir -p "$POPPY_ROOT/puppet-master/pictures"
+        sed -i 's/cv2.imwrite(\"{}.png\"/cv2.imwrite(\"pictures\/{}.png\"/' $POPPY_ROOT/pypot/server/snap.py
+        sed -i 's/#os.makedirs(\"pictures_path\"/os.makedirs(\"pictures\"/' $POPPY_ROOT/pypot/server/snap.py
+        ln -s "$POPPY_ROOT/puppet-master/pictures"  My\ Pictures
 
-        mkdir -p My\ Pictures
+        echo -e "symlink done"
 
         get_snap_project "Snap project"
         get_notebooks "Python notebooks"
