@@ -134,13 +134,20 @@ install_snap()
 build_documentation()
 {
     echo -e "\e[33m setup_puppet_master: build_documentation \e[0m"
-    curl -sL https://deb.nodesource.com/setup_14.x | bash -
+    echo -e "\e[33m  build_documentation: install_node.js \e[0m"
+    curl -sL https://deb.nodesource.com/setup_14.x | sudo bash -
     sudo apt-get install -y nodejs
+    export NODE_OPTIONS=--max_old_space_size=2048
+    echo -e "\e[33m  build_documentation: git_clone_poppy-docs \e[0m"
     git clone https://github.com/poppy-project/poppy-docs.git
     pushd poppy-docs
+        echo -e "\e[33m  build_documentation: npm_install_gitbook \e[0m"
         sudo npm install gitbook-cli -g
+        echo -e "\e[33m  build_documentation: gitbook_install \e[0m"
         gitbook install
+        echo -e "\e[33m  build_documentation: gitbook_build_poppy-docs \e[0m"
         gitbook build ./
+        echo -e "\e[33m  build_documentation: get_pdf_version \e[0m"
         wget https://www.gitbook.com/download/pdf/book/poppy-project/poppy-docs?lang=en -O The\ Documentation.pdf
         wget https://www.gitbook.com/download/pdf/book/poppy-project/poppy-docs?lang=fr -O La\ Documentation.pdf
     popd
