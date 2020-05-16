@@ -9,7 +9,6 @@ branch=${3:-"master"}
 
 hampy_branch="master"
 ikpy_branch="$3"
-poppy_creature_branch="master"
 
 puppet_master_branch="$3"
 viewer_branch="_$3"
@@ -31,7 +30,6 @@ install_poppy_libraries()
     echo -e "\e[33m install_poppy_libraries: dependance \e[0m"
     pip install "https://github.com/poppy-project/hampy/archive/${hampy_branch}.zip"
     pip install "https://github.com/poppy-project/ikpy/archive/${ikpy_branch}.zip"
-    pip install "https://github.com/poppy-project/poppy-creature/archive/${poppy_creature_branch}.zip"
 
     echo -e "\e[33m install_poppy_libraries: pypot \e[0m"
     pip install "https://github.com/poppy-project/pypot/archive/${branch}.zip"
@@ -66,6 +64,7 @@ setup_puppet_master()
         rm -f puppet-master.zip
         mv "puppet-master-${puppet_master_branch}" puppet-master
         pushd puppet-master
+            download_documentation
             pip install flask pyyaml requests
             python bootstrap.py "$hostname" "$creature"
         popd
@@ -73,7 +72,6 @@ setup_puppet_master()
         install_monitor
         install_viewer
         install_snap
-        build_documentation
     popd
 }
 
@@ -131,26 +129,15 @@ install_snap()
 }
 
 # Called from setup_puppet_master()
-build_documentation()
+download_documentation()
 {
-    echo -e "\e[33m setup_puppet_master: build_documentation \e[0m"
-    echo -e "\e[33m  build_documentation: install_node.js \e[0m"
-    curl -sL https://deb.nodesource.com/setup_14.x | sudo bash -
-    sudo apt-get install -y nodejs
-    export NODE_OPTIONS=--max_old_space_size=2048
-    echo -e "\e[33m  build_documentation: git_clone_poppy-docs \e[0m"
-    git clone https://github.com/poppy-project/poppy-docs.git
-    pushd poppy-docs
-        echo -e "\e[33m  build_documentation: npm_install_gitbook \e[0m"
-        sudo npm install gitbook-cli -g
-        echo -e "\e[33m  build_documentation: gitbook_install \e[0m"
-        gitbook install
-        echo -e "\e[33m  build_documentation: gitbook_build_poppy-docs \e[0m"
-        gitbook build ./
-        echo -e "\e[33m  build_documentation: get_pdf_version \e[0m"
-        wget https://www.gitbook.com/download/pdf/book/poppy-project/poppy-docs?lang=en -O The\ Documentation.pdf
-        wget https://www.gitbook.com/download/pdf/book/poppy-project/poppy-docs?lang=fr -O La\ Documentation.pdf
-    popd
+    echo -e "\e[33m setup_puppet_master: download_documentation \e[0m"
+    version=$(curl --silent https://github.com/poppy-project/poppy-docs/releases/latest | sed 's#.*tag/\(.*\)\".*#\1#')
+    url="https://github.com/poppy-project/poppy-docs/releases/download/$version/_book.zip"
+    wget $url -O _book.zip
+    unzip _book.zip
+    rm -rf _book.zip
+    mv _book static/doc/
 }
 
 setup_documents()
