@@ -9,7 +9,6 @@ branch=${3:-"master"}
 
 hampy_branch="master"
 ikpy_branch="$3"
-poppy_creature_branch="master"
 
 puppet_master_branch="$3"
 viewer_branch="_$3"
@@ -31,7 +30,6 @@ install_poppy_libraries()
     echo -e "\e[33m install_poppy_libraries: dependance \e[0m"
     pip install "https://github.com/poppy-project/hampy/archive/${hampy_branch}.zip"
     pip install "https://github.com/poppy-project/ikpy/archive/${ikpy_branch}.zip"
-    pip install "https://github.com/poppy-project/poppy-creature/archive/${poppy_creature_branch}.zip"
 
     echo -e "\e[33m install_poppy_libraries: pypot \e[0m"
     pip install "https://github.com/poppy-project/pypot/archive/${branch}.zip"
