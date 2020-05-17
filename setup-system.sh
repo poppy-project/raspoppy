@@ -92,11 +92,8 @@ install_additional_packages()
 setup_network_tools()
 {
     echo -e "\e[33m setup_network_tools \e[0m"
-    # samba
-    sudo sed -i 's/map to guest = .*/map to guest = never/g' /etc/samba/smb.conf #TODO BUG /etc/samba/smb.conf: No such file or directory
-    (echo "poppy"; echo "poppy") | sudo smbpasswd -s -a poppy #TODO BUG smbpasswd: command not found
 
-    # avahi services
+# avahi services
     sudo tee /etc/avahi/services/ssh.service <<EOF
 <?xml version="1.0" standalone='no'?>
 <!DOCTYPE service-group SYSTEM "avahi-service.dtd">
