@@ -48,7 +48,7 @@ system_setup()
     # Add more langs (GB, US, FR)
     sudo sed -i 's/^#\s*\(en_GB.UTF-8 UTF-8\)/\1/g' /etc/locale.gen
     sudo sed -i 's/^#\s*\(en_US.UTF-8 UTF-8\)/\1/g' /etc/locale.gen
-    sudo sed -i 's/^#\s*\(fr_FR.UTF-8 UTF-8\)/\1/g' /etc/locale.gengroups #TODO BUG /etc/locale.gengroups: No such file or directory
+    sudo sed -i 's/^#\s*\(fr_FR.UTF-8 UTF-8\)/\1/g' /etc/locale.gen
     sudo locale-gen
 
     #JLC: don't know if the stuff bellow must be done with RPi4 under RaspBian buster ?
