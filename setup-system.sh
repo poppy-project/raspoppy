@@ -70,7 +70,7 @@ EOF
 
 install_additional_packages()
 {
-    echo -e "\e[33m upgrade_systeme \e[0m"
+    echo -e "\e[33m upgrade_system \e[0m"
     sudo apt-get update && sudo apt upgrade -y && sudo apt autoremove -y    
     # added python3-venev & libatalas-base-dev for RaspBian buster:
     # removed samba* & dhcpcd, added libhdf5-dev libhdf5-serial-dev libjasper-dev for opencv
