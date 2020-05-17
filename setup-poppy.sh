@@ -137,7 +137,7 @@ download_documentation()
     wget $url -O _book.zip
     unzip _book.zip
     rm -rf _book.zip
-    mv _book static/doc/
+    mv _book docs
 }
 
 setup_documents()
