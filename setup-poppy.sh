@@ -64,11 +64,10 @@ setup_puppet_master()
         rm -f puppet-master.zip
         mv "puppet-master-${puppet_master_branch}" puppet-master
         pushd puppet-master
-            download_documentation
             pip install flask pyyaml requests
             python bootstrap.py "$hostname" "$creature"
         popd
-
+        download_documentation
         install_monitor
         install_viewer
         install_snap
@@ -137,7 +136,7 @@ download_documentation()
     wget $url -O _book.zip
     unzip _book.zip
     rm -rf _book.zip
-    mv _book docs
+    mv _book poppy-docs
 }
 
 setup_documents()
@@ -261,6 +260,37 @@ EOF
     sudo systemctl enable puppet-master.service
 }
 
+autostartup_documentation()
+{
+    echo -e "\e[33m autostartup_documentation \e[0m"
+    cd || exit
+
+    if [ -z "${POPPY_ROOT+x}" ]; then
+        export POPPY_ROOT="$HOME/dev"
+        mkdir -p "$POPPY_ROOT"
+    fi
+
+    sudo tee /etc/systemd/system/poppy-docs.service > /dev/null <<EOF
+[Unit]
+Description=poppy docs service
+Wants=network-online.target
+After=network.target network-online.target
+
+[Service]
+PIDFile=/run/poppy-docs.pid
+ExecStart=$HOME/pyenv/bin/python -m http.server 4000
+User=poppy
+Group=poppy
+WorkingDirectory=$POPPY_ROOT/poppy-docs/
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+    sudo systemctl enable poppy-docs.service
+}
+
 redirect_port80_webinterface()
 {
     echo -e "\e[33m redirect_port80_webinterface \e[0m"
@@ -308,6 +338,7 @@ install_poppy_libraries
 setup_puppet_master
 setup_documents
 autostartup_webinterface
+autostartup_documentation
 redirect_port80_webinterface
 setup_update
 set_logo
