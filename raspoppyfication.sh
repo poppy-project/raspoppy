@@ -76,28 +76,28 @@ echo -e "\e[33m *********************************** \e[0m"
 echo -e "\e[33m **** RasPoppyfication Starting **** \e[0m"
 echo -e "\e[33m *********************************** \e[0m"
 echo -e " "
-TIME=date
+TIME=$(date)
 echo -e "\e[33m -- $TIME -- \e[0m"
 echo -e " "
-TIME=date "+%H:%M:%S"
+TIME=$(date "+%H:%M:%S")
 echo -e "\e[33m ** Setting System ** \e[0m -- $TIME --"
 echo -e " "
 wget "$url_root/setup-system.sh"
 bash setup-system.sh "$poppy_username" "$poppy_password" "$poppy_creature" $git_branch
 echo -e " "
-TIME=date "+%H:%M:%S"
+TIME=$(date "+%H:%M:%S")
 echo -e "\e[33m ** Setting Python ** \e[0m -- $TIME --"
 echo -e " "
 wget "$url_root/setup-python.sh"
 sudo -u "$poppy_username" bash setup-python.sh $git_branch
 echo -e " "
-TIME=date "+%H:%M:%S"
+TIME=$(date "+%H:%M:%S")
 echo -e "\e[33m ** Setting Poppy ** \e[0m -- $TIME --"
 echo -e " "
 wget "$url_root/setup-poppy.sh"
 sudo -u "$poppy_username" bash -i setup-poppy.sh "$poppy_creature" "$poppy_hostname" $git_branch
 echo -e " "
-TIME=date "+%H:%M:%S"
+TIME=$(date "+%H:%M:%S")
 echo -e "\e[33m ** Setting Network ** \e[0m -- $TIME --"
 echo -e " "
 echo -e "\e[33m setup-hotspot \e[0m"
@@ -106,7 +106,7 @@ bash setup-hotspot.sh $git_branch
 echo -e "\e[33m change-hostname to \e[4m$poppy_hostname\e[0m"
 sudo raspi-config --change-hostname "$poppy_hostname"
 echo -e " "
-TIME=date
+TIME=$(date)
 echo -e "\e[33m -- $TIME -- \e[0m"
 echo -e " "
 echo -e "\e[33m *********************************** \e[0m"
