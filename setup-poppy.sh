@@ -281,7 +281,7 @@ After=network.target network-online.target
 
 [Service]
 PIDFile=/run/poppy-docs.pid
-ExecStart=$HOME/pyenv/bin/python -m http.server 4000
+ExecStart=$HOME/pyenv/bin/python -u -m http.server 4000
 User=poppy
 Group=poppy
 WorkingDirectory=$POPPY_ROOT/poppy-docs/

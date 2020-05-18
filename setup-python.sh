@@ -87,6 +87,8 @@ User=poppy
 Group=poppy
 WorkingDirectory=$JUPYTER_FOLDER
 Type=simple
+StandardOutput=append:/tmp/jupyter.log
+StandardError=append:/tmp/jupyter.log
 [Install]
 WantedBy=multi-user.target
 EOF
