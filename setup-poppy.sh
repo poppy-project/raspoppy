@@ -67,15 +67,15 @@ setup_puppet_master()
             pip install flask pyyaml requests
             python bootstrap.py "$hostname" "$creature"
         popd
-        install_documentation
-        install_viewer
-        install_monitor
-        install_snap
+        download_documentation
+        download_viewer
+        download_monitor
+        download_snap
     popd
 }
 
 # Called from setup_puppet_master()
-install_monitor()
+download_monitor()
 {
     echo -e "\e[33m setup_puppet_master: install_monitor \e[0m"
     wget "https://github.com/poppy-project/poppy-monitor/archive/${monitor_branch}.zip" -O monitor.zip
@@ -85,18 +85,17 @@ install_monitor()
 }
 
 # Called from setup_puppet_master()
-install_viewer()
+download_viewer()
 {
     echo -e "\e[33m setup_puppet_master: install_viewer \e[0m"
     wget "https://github.com/poppy-project/poppy-simu/archive/gh-pages${viewer_branch}.zip" -O viewer.zip
     unzip viewer.zip
     rm -f viewer.zip
     mv "poppy-simu-gh-pages${viewer_branch}" poppy-viewer
-    autostartup_viewer
 }
 
 # Called from setup_puppet_master()
-install_snap()
+download_snap()
 {
     echo -e "\e[33m setup_puppet_master: install_snap \e[0m"
     wget "https://github.com/jmoenig/Snap/archive/v${snap_version}.zip" -O snap.zip
@@ -129,7 +128,7 @@ install_snap()
 }
 
 # Called from setup_puppet_master()
-install_documentation()
+download_documentation()
 {
     echo -e "\e[33m setup_puppet_master: install_documentation \e[0m"
     version=$(curl --silent https://github.com/poppy-project/poppy-docs/releases/latest | sed 's#.*tag/\(.*\)\".*#\1#')
@@ -138,7 +137,6 @@ install_documentation()
     rm -rf _book.zip
     mv _book poppy-docs
     rm -r "poppy-docs/es" "poppy-docs/de" "poppy-docs/nl"
-    autostartup_documentation
 }
 
 setup_documents()
@@ -231,7 +229,13 @@ get_notebooks()
     popd
 }
 
-
+setup_service()
+{
+    autostartup_webinterface
+    autostartup_documentation
+    autostartup_viewer
+}
+# Called from setup_service()
 autostartup_webinterface()
 {
     echo -e "\e[33m autostartup_webinterface \e[0m"
@@ -261,8 +265,7 @@ EOF
 
     sudo systemctl enable puppet-master.service
 }
-
-# Called from install_documentation()
+# Called from setup_service()
 autostartup_documentation()
 {
     echo -e "\e[33m autostartup_documentation \e[0m"
@@ -295,8 +298,7 @@ EOF
 
     sudo systemctl enable poppy-docs.service
 }
-
-# Called from install_viewer()
+# Called from setup_service()
 autostartup_viewer()
 {
     echo -e "\e[33m autostartup_viewer \e[0m"
@@ -352,11 +354,12 @@ import yaml
 from subprocess import call
 with open(os.path.expanduser('~/.poppy_config.yaml')) as f:
     config = yaml.load(f)
-with open(config['update']['logfile'], 'w') as f:
+with open(config['poppyLog']['update'], 'w') as f:
     call(['bash', os.path.expanduser('~/.poppy-update.sh'),
-          config['update']['url'],
-          config['update']['logfile'],
-          config['update']['lockfile']], stdout=f, stderr=f)
+          config['info']['updateURL'],
+          config['poppyLog']['update'],
+          config['poppyLog']['update'].replace('.log','-pid.lock')],
+          stdout=f, stderr=f)
 EOF
     chmod +x poppy-update
     mv poppy-update "$HOME/pyenv/bin/"
@@ -376,7 +379,7 @@ set_logo()
 install_poppy_libraries
 setup_puppet_master
 setup_documents
-autostartup_webinterface
+setup_services
 redirect_port80_webinterface
 setup_update
 set_logo
