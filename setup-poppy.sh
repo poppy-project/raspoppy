@@ -67,9 +67,9 @@ setup_puppet_master()
             pip install flask pyyaml requests
             python bootstrap.py "$hostname" "$creature"
         popd
-        download_documentation
-        install_monitor
+        install_documentation
         install_viewer
+        install_monitor
         install_snap
     popd
 }
@@ -92,6 +92,7 @@ install_viewer()
     unzip viewer.zip
     rm -f viewer.zip
     mv "poppy-simu-gh-pages${viewer_branch}" poppy-viewer
+    autostartup_viewer
 }
 
 # Called from setup_puppet_master()
@@ -128,15 +129,16 @@ install_snap()
 }
 
 # Called from setup_puppet_master()
-download_documentation()
+install_documentation()
 {
-    echo -e "\e[33m setup_puppet_master: download_documentation \e[0m"
+    echo -e "\e[33m setup_puppet_master: install_documentation \e[0m"
     version=$(curl --silent https://github.com/poppy-project/poppy-docs/releases/latest | sed 's#.*tag/\(.*\)\".*#\1#')
-    url="https://github.com/poppy-project/poppy-docs/releases/download/$version/_book.zip"
-    wget $url -O _book.zip
+    wget "https://github.com/poppy-project/poppy-docs/releases/download/${version}/_book.zip" -O _book.zip
     unzip _book.zip
     rm -rf _book.zip
     mv _book poppy-docs
+    rm -r "poppy-docs/es" "poppy-docs/de" "poppy-docs/nl"
+    autostartup_documentation
 }
 
 setup_documents()
@@ -260,6 +262,7 @@ EOF
     sudo systemctl enable puppet-master.service
 }
 
+# Called from install_documentation()
 autostartup_documentation()
 {
     echo -e "\e[33m autostartup_documentation \e[0m"
@@ -289,6 +292,38 @@ WantedBy=multi-user.target
 EOF
 
     sudo systemctl enable poppy-docs.service
+}
+
+# Called from install_viewer()
+autostartup_viewer()
+{
+    echo -e "\e[33m autostartup_viewer \e[0m"
+    cd || exit
+
+    if [ -z "${POPPY_ROOT+x}" ]; then
+        export POPPY_ROOT="$HOME/dev"
+        mkdir -p "$POPPY_ROOT"
+    fi
+
+    sudo tee /etc/systemd/system/poppy-viewer.service > /dev/null <<EOF
+[Unit]
+Description=poppy viewer service
+Wants=network-online.target
+After=network.target network-online.target
+
+[Service]
+PIDFile=/run/poppy-viewer.pid
+ExecStart=$HOME/pyenv/bin/python -m http.server 8080
+User=poppy
+Group=poppy
+WorkingDirectory=$POPPY_ROOT/poppy-viewer/
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+    sudo systemctl enable poppy-viewer.service
 }
 
 redirect_port80_webinterface()
@@ -338,7 +373,6 @@ install_poppy_libraries
 setup_puppet_master
 setup_documents
 autostartup_webinterface
-autostartup_documentation
 redirect_port80_webinterface
 setup_update
 set_logo
