@@ -286,6 +286,8 @@ User=poppy
 Group=poppy
 WorkingDirectory=$POPPY_ROOT/poppy-docs/
 Type=simple
+StandardOutput=append:/tmp/poppy-docs.log
+StandardError=append:/tmp/poppy-docs.log
 
 [Install]
 WantedBy=multi-user.target
@@ -313,11 +315,13 @@ After=network.target network-online.target
 
 [Service]
 PIDFile=/run/poppy-viewer.pid
-ExecStart=$HOME/pyenv/bin/python -m http.server 8080
+ExecStart=$HOME/pyenv/bin/python -u -m http.server 8000
 User=poppy
 Group=poppy
 WorkingDirectory=$POPPY_ROOT/poppy-viewer/
 Type=simple
+StandardOutput=append:/tmp/poppy-viewer.log
+StandardError=append:/tmp/poppy-viewer.log
 
 [Install]
 WantedBy=multi-user.target
