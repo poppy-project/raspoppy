@@ -229,7 +229,7 @@ get_notebooks()
     popd
 }
 
-setup_service()
+setup_services()
 {
     autostartup_webinterface
     autostartup_documentation
