@@ -8,10 +8,10 @@ hostname=$2
 branch=${3:-"master"}
 
 hampy_branch="master"
-ikpy_branch="$3"
+ikpy_branch="$branch"
 
-puppet_master_branch="$3"
-viewer_branch="_$3"
+puppet_master_branch="$branch"
+viewer_branch="_$branch"
 monitor_branch="master"
 snap_version="5.4.5"
 
