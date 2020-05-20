@@ -13,12 +13,10 @@ git_branch=${4:-"master"}
 install_custom_raspiconfig()
 {
     echo -e "\e[33m install_custom_raspiconfig \e[0m"
-    if [ "$(hrpi-version)" = "rpi-3" ]; then
-        wget https://raw.githubusercontent.com/poppy-project/raspi-config/master/raspi-config
-        chmod +x raspi-config
-        sudo chown root:root raspi-config
-        sudo mv raspi-config /usr/bin/
-    fi
+    wget https://raw.githubusercontent.com/poppy-project/raspi-config/master/raspi-config
+    chmod +x raspi-config
+    sudo chown root:root raspi-config
+    sudo mv raspi-config /usr/bin/
 }
 
 setup_user()
@@ -51,20 +49,22 @@ system_setup()
     sudo sed -i 's/^#\s*\(fr_FR.UTF-8 UTF-8\)/\1/g' /etc/locale.gen
     sudo locale-gen
 
-    #JLC: don't know if the stuff bellow must be done with RPi4 under RaspBian buster ?
-    #JLC: => anyway it can always be done by typing "sudo raspi-config" in aterminal !
     
-    if [ "$creature" = "poppy-ergo-jr" -a "$(hrpi-version)" = "rpi-3"  ]; then
+    if [ "$creature" = "poppy-ergo-jr" ]; then
         echo -e "\e[33m Enable camera \e[0m"
         echo "start_x=1" | sudo tee --append /boot/config.txt
         echo "bcm2835-v4l2" | sudo tee /etc/modules-load.d/bcm2835-v4l2.conf
 
         echo -e "\e[33m Setup serial communication \e[0m"
         sudo raspi-config --disable-serial-log
-        sudo tee --append /boot/config.txt > /dev/null <<EOF
+
+        #JLC: don't know if the stuff bellow must be done with RPi4 under RaspBian buster ?
+	if [ "$(hrpi-version)" != "rpi-4" ]; then
+            sudo tee --append /boot/config.txt > /dev/null <<EOF
 init_uart_clock=16000000
 dtoverlay=pi3-miniuart-bt
 EOF
+        fi
      fi
 }
 
@@ -84,7 +84,7 @@ install_additional_packages()
     # board version utility
     # hrpi-version compatible with rpi-3 & rpi-4 is replaced by the new version included in the depository
     echo -e "\e[33m board_version_utility \e[0m"
-    wget https://raw.githubusercontent.com/poppy-project/raspoppy/dev_gen2/hrpi-version.sh -O hrpi-version.sh
+    wget https://raw.githubusercontent.com/poppy-project/raspoppy/${git_branch}/hrpi-version.sh -O hrpi-version.sh
     sudo cp hrpi-version.sh /usr/bin/hrpi-version
     sudo chmod +x /usr/bin/hrpi-version
 }
