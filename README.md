@@ -20,9 +20,9 @@ Log again in your Raspberry Pi. You can connect via ssh or directly plug a scree
 The following **requires the Raspberry Pi to have an internet access**.
 
 ```bash
-curl -L https://raw.githubusercontent.com/poppy-project/raspoppy/master/raspoppyfication.sh -o /tmp/raspoppyfication.sh
+curl -L https://raw.githubusercontent.com/poppy-project/raspoppy/dev_gen2/raspoppyfication.sh -o /tmp/raspoppyfication.sh
 chmod +x /tmp/raspoppyfication.sh
-sudo /tmp/raspoppyfication.sh
+sudo /tmp/raspoppyfication.sh --branch=dev_gen2
 ```
 
 These commands will install all the software detailed above, and set up the control interface. When it's done, reboot the Raspberry Pi and connect to `http://poppy.local`.

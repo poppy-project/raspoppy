@@ -8,10 +8,10 @@ hostname=$2
 branch=${3:-"master"}
 
 hampy_branch="master"
-ikpy_branch="$3"
+ikpy_branch="$branch"
 
-puppet_master_branch="$3"
-viewer_branch="_$3"
+puppet_master_branch="$branch"
+viewer_branch="_$branch"
 monitor_branch="master"
 snap_version="5.4.5"
 
@@ -34,7 +34,14 @@ install_poppy_libraries()
     echo -e "\e[33m install_poppy_libraries: pypot \e[0m"
     pip install "https://github.com/poppy-project/pypot/archive/${branch}.zip"
     echo -e "\e[33m install_poppy_libraries: $creature \e[0m"
-    pip install "$creature"
+    pushd /tmp
+        wget "https://github.com/poppy-project/$creature/archive/${branch}.zip" -O $creature-$branch.zip
+        unzip $creature-$branch.zip
+        rm -f $creature-$branch.zip
+        pushd $creature-$branch
+            pip install software/
+        popd
+    popd
 
     if [ -z "${POPPY_ROOT+x}" ]; then
         export POPPY_ROOT="$HOME/dev"
