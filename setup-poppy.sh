@@ -156,7 +156,7 @@ setup_documents()
 
         mkdir -p "$POPPY_ROOT/puppet-master/moves"
         sed -i 's/self.moves_path=""/self.moves_path="moves\/"/' $POPPY_ROOT/pypot/server/rest.py
-        sed -i 's/#os.makedirs(self.moves_path/os.makedirs(self.moves_path/' $POPPY_ROOT/pypot/server/rest.py
+        sed -i 's/#os.makedirs(self.moves_path/os.makedirs(self.moves_path/g' $POPPY_ROOT/pypot/server/rest.py
         ln -s "$POPPY_ROOT/puppet-master/moves" Moves\ recorded
 
         name=$(python -c "str = '$creature'; print(str.replace('-','_'))")
