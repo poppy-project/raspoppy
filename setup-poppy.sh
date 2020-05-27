@@ -84,7 +84,7 @@ setup_puppet_master()
 # Called from setup_puppet_master()
 download_monitor()
 {
-    echo -e "\e[33m setup_puppet_master: install_monitor \e[0m"
+    echo -e "\e[33m setup_puppet_master: download_monitor \e[0m"
     wget "https://github.com/poppy-project/poppy-monitor/archive/${monitor_branch}.zip" -O monitor.zip
     unzip monitor.zip
     rm -f monitor.zip
@@ -94,7 +94,7 @@ download_monitor()
 # Called from setup_puppet_master()
 download_viewer()
 {
-    echo -e "\e[33m setup_puppet_master: install_viewer \e[0m"
+    echo -e "\e[33m setup_puppet_master: download_viewer \e[0m"
     wget "https://github.com/poppy-project/poppy-simu/archive/gh-pages${viewer_branch}.zip" -O viewer.zip
     unzip viewer.zip
     rm -f viewer.zip
@@ -104,7 +104,7 @@ download_viewer()
 # Called from setup_puppet_master()
 download_snap()
 {
-    echo -e "\e[33m setup_puppet_master: install_snap \e[0m"
+    echo -e "\e[33m setup_puppet_master: download_snap \e[0m"
     wget "https://github.com/jmoenig/Snap/archive/v${snap_version}.zip" -O snap.zip
     unzip snap.zip
     rm -f snap.zip
@@ -137,7 +137,7 @@ download_snap()
 # Called from setup_puppet_master()
 download_documentation()
 {
-    echo -e "\e[33m setup_puppet_master: install_documentation \e[0m"
+    echo -e "\e[33m setup_puppet_master: download_documentation \e[0m"
     version=$(curl --silent https://github.com/poppy-project/poppy-docs/releases/latest | sed 's#.*tag/\(.*\)\".*#\1#')
     wget "https://github.com/poppy-project/poppy-docs/releases/download/${version}/_book.zip" -O _book.zip
     unzip _book.zip
@@ -227,6 +227,7 @@ get_notebooks()
         fi
         repo=https://raw.githubusercontent.com/poppy-project/pypot/$branch/samples/notebooks
         curl -o "Benchmark your Poppy robot.ipynb" $repo/Benchmark%20your%20Poppy%20robot.ipynb
+        curl -o "Another language.ipynb" $repo/Another%20language.ipynb
 
         # Download community notebooks
         wget https://github.com/poppy-project/community-notebooks/archive/master.zip -O notebooks.zip
