@@ -345,6 +345,8 @@ redirect_port80_webinterface()
     echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
     echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
     sudo apt-get install -y iptables-persistent
+    sudo bash -c 'iptables-save > /etc/iptables/rules.v4'
+    sudo bash -c 'ip6tables-save > /etc/iptables/rules.v6'
 }
 
 setup_update()
