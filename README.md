@@ -11,13 +11,13 @@ While we try to keep this procedure as simple as possible, it still requires a g
 
 ### Install Raspbian
 
-Just follow standard [instructions](https://www.raspberrypi.org/downloads/raspbian/) from raspberry.org. We use [Raspbian Buster with desktop *2020-02-13* image].
+Download [the latest Raspberry Pi OS (32-bit) with desktop](https://downloads.raspberrypi.org/raspios_armhf_latest) and follow [the installing guide](https://www.raspberrypi.org/documentation/installation/installing-images/README.md). We used **2020-05-27-raspios-buster-armhf.img**. 
 
 ### Setup the OS for our needs
 
-Log again in your Raspberry Pi. You can connect via ssh or directly plug a screen and a keyboard.
+Boot your system and temporarily connect a HDMI monitor, and an Ethernet cable to your router. In order to raspoppyfy your Raspberry Pi, it is needed that **the Raspberry Pi has an internet access**.
 
-The following **requires the Raspberry Pi to have an internet access**.
+Then open the terminal and type these commands:
 
 ```bash
 curl -L https://raw.githubusercontent.com/poppy-project/raspoppy/dev_gen2/raspoppyfication.sh -o /tmp/raspoppyfication.sh
@@ -25,7 +25,7 @@ chmod +x /tmp/raspoppyfication.sh
 sudo /tmp/raspoppyfication.sh --branch=dev_gen2 | tee $HOME/log_raspoppy_$(date +%F_%H-%M).txt
 ```
 
-These commands will install all the software detailed above, and set up the control interface. When it's done, reboot the Raspberry Pi and connect to `http://poppy.local`.
+They will install all the software detailed above, and set up the control interface. When it's done, reboot the Raspberry Pi and connect to `http://poppy.local`.
 
 The installation script defaults will set the board for a Poppy Ergo Jr, but it can be slightly tailored to suit your needs. `./raspoppyfication.sh --help` displays available options.
 
