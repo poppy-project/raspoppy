@@ -3,14 +3,14 @@
 ## Shrink it
 
 1.  Mount the image using another Linux (a Raspberry Pi works).
-2.  Find the name of the device using *sudo fdisk -l* (in our case it's /dev/sda)
+2.  Find the name of the device using *sudo fdisk -l* (in our case it's /dev/mmcblk0)
 3.  Resize the filesystem
-    * `sudo e2fsck -f /dev/sda2`
-    * `sudo resize2fs /dev/sda2 3400M`
+    * `sudo e2fsck -f /dev/mmcblk0p2`
+    * `sudo resize2fs /dev/mmcblk0p2 7000M`
 4.  Resize the partition (it must be larger than the file system):
 
     ```bash
-    sudo parted /dev/sda resizepart 2 3450M
+    sudo parted /dev/mmcblk0 resizepart 2 7001M
     ```
 
 ##  Expand it on first boot
@@ -28,5 +28,6 @@
 Copy the image using dd and count:
 
 ```bash
-sudo dd bs=1m count=3500 if=/dev/rdisk2 of=$(date +%F)-poppy-ergo-jr.img
+sudo dd bs=1M count=3500 if=/dev/mmcblk0 of=$(date +%F)-poppy-ergo-jr.img status=progress
+zip $(date +%F)-poppy-ergo-jr.img.zip $(date +%F)-poppy-ergo-jr.img
 ```
