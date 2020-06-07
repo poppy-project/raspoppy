@@ -10,7 +10,7 @@
 4.  Resize the partition (it must be larger than the file system):
 
     ```bash
-    sudo parted /dev/mmcblk0 resizepart 2 7001M
+    sudo parted /dev/mmcblk0 resizepart 2 7700M
     ```
 
 ##  Expand it on first boot
