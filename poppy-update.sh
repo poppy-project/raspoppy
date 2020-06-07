@@ -20,11 +20,6 @@ if [ $? -ne 0 ]; then
 fi
 
 bash auto-update.sh > "$logs" 2>&1
-if [ $? -ne 0 ]; then
-    echo "Update failed!"
-else
-    echo "Update successful!"
-fi
 
 rm auto-update.sh
 cp "$logs" "$logs.$now.bkp"

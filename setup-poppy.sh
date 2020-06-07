@@ -70,7 +70,7 @@ setup_puppet_master()
         mv "puppet-master-${puppet_master_branch}" puppet-master
         pushd puppet-master
             pip install flask pyyaml requests
-            python bootstrap.py "$hostname" "$creature"
+            python bootstrap.py "$hostname" "$creature" "--branch" "${branch}"
         popd
         download_documentation
         download_viewer
@@ -356,12 +356,12 @@ setup_update()
     wget "https://raw.githubusercontent.com/poppy-project/raspoppy/$branch/poppy-update.sh" -O "$HOME/.poppy-update.sh"
 
     cat > poppy-update << EOF
-#$HOME/pyenv/bin/python
+#!/$HOME/pyenv/bin/python
 import os
 import yaml
 from subprocess import call
 with open(os.path.expanduser('~/.poppy_config.yaml')) as f:
-    config = yaml.load(f)
+    config = yaml.load(f, Loader=yaml.SafeLoader)
 with open(config['poppyLog']['update'], 'w') as f:
     call(['bash', os.path.expanduser('~/.poppy-update.sh'),
           config['info']['updateURL'],
