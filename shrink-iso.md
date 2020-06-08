@@ -28,6 +28,9 @@
 Copy the image using dd and count:
 
 ```bash
-sudo dd bs=1M count=3500 if=/dev/mmcblk0 of=$(date +%F)-poppy-ergo-jr.img status=progress
-zip $(date +%F)-poppy-ergo-jr.img.zip $(date +%F)-poppy-ergo-jr.img
+sudo dd bs=1M count=7700 if=/dev/mmcblk0 of=$(date +%F)-poppy-ergo-jr.img status=progress
+wget https://raw.githubusercontent.com/poppy-project/PiShrink/master/pishrink.sh
+chmod +x pishrink.sh
+sudo ./pishrink.sh $(date +%F)-poppy-ergo-jr.img $(date +%F)-poppy-ergo-jr.shrink.img
+zip $(date +%F)-poppy-ergo-jr.img.zip $(date +%F)-poppy-ergo-jr.shrink.img
 ```
