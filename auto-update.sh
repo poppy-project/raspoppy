@@ -37,7 +37,7 @@ creature=$old_robot_creature
 hostname=$old_robot_name
 
 if [[ ! -z "$old_info_version" ]]; then
-    echo -e "Puppet-master v$old_info_version doesn't support Update Function!"
+    echo -e "Puppet-master v $old_info_version doesn't support Update Function!"
     echo -e "Please, update your $creature with flash image methode."
     echo -e "> URL to dowload imgage-file (file in *.img.zip):"
     echo -e "https://github.com/poppy-project/$creature/releases/latest"
@@ -254,49 +254,49 @@ echo -e "\e[33m > Save docs \e[0m -- $(date "+%H:%M:%S") --"
 save_my_doc
 echo -e " "
 if [ "$n_pypot" == "$v_pypot" ]; then
-    echo -e " > pypot (v$v_pypot) already up to date!"
+    echo -e " > pypot (v $v_pypot) already up to date!"
 else
     echo -e "\e[33m > update: pypot \e[0m -- $(date "+%H:%M:%S") --"
     update_pypot
 fi
 echo -e " "
 if [ "$n_creature" == "$v_creature" ]; then
-    echo -e " > $creature (v$v_creature) already up to date!"
+    echo -e " > $creature (v $v_creature) already up to date!"
 else
     echo -e "\e[33m > update: $creature \e[0m -- $(date "+%H:%M:%S") --"
     update_creature
 fi
 echo -e " "
 if [ "$n_puppetMaster" == "$v_puppetMaster" ]; then
-    echo -e " > puppet-master (v$v_puppetMaster) already up to date!"
+    echo -e " > puppet-master (v $v_puppetMaster) already up to date!"
 else
     echo -e "\e[33m > update: puppet-master \e[0m -- $(date "+%H:%M:%S") --"
     update_puppet_master
 fi
 echo -e " "
 if [ "$n_monitor" == "$v_monitor" ]; then
-    echo -e " > poppy-monitor (v$v_monitor) already up to date!"
+    echo -e " > poppy-monitor (v $v_monitor) already up to date!"
 else
     echo -e "\e[33m > update_monitor \e[0m -- $(date "+%H:%M:%S") --"
     update_monitor
 fi
 echo -e " "
 if [ "$n_viewer" == "$v_viewer" ]; then
-    echo -e " > poppy-viewer (v$v_viewer) already up to date!"
+    echo -e " > poppy-viewer (v $v_viewer) already up to date!"
 else
     echo -e "\e[33m > update_viewer \e[0m -- $(date "+%H:%M:%S") --"
     update_viewer
 fi
 echo -e " "
 if [ "$n_snap" == "$v_snap" ]; then
-    echo -e " > Snap-block (v$v_snap) already up to date!"
+    echo -e " > Snap-block (v $v_snap) already up to date!"
 else
     echo -e "\e[33m > update_snap \e[0m -- $(date "+%H:%M:%S") --"
     update_snap
 fi
 echo -e " "
 if [ "$n_docs" == "$v_docs" ]; then
-    echo -e " > Documentation (v$v_docs) already up to date!"
+    echo -e " > Documentation (v $v_docs) already up to date!"
 else
     echo -e "\e[33m > update_documentation \e[0m -- $(date "+%H:%M:%S") --"
     update_documentation
