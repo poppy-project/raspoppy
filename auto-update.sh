@@ -78,7 +78,7 @@ b_monitor="master"
 
 wget "https://raw.githubusercontent.com/poppy-project/puppet-master/$branch/default_config.yaml" -O new_config.yaml
 eval $(parse_yaml "new_config.yaml" "new_")
-rm new_config.yaml
+mv -f new_config.yaml "$POPPY_ROOT/puppet-master/default_config.yaml"
 
 n_puppetMaster=$new_version_puppetMaster
 n_pypot=$new_version_pypot
