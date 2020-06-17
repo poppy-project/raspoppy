@@ -141,6 +141,8 @@ download_documentation()
     unzip _book.zip
     rm -rf _book.zip
     mv _book poppy-docs
+    ln -s $(realpath .)/poppy-docs/en/assembly-guides/ergo-jr poppy-docs/en/assembly-guides/poppy-ergo-jr
+    ln -s $(realpath .)/poppy-docs/fr/assembly-guides/ergo-jr poppy-docs/fr/assembly-guides/poppy-ergo-jr
     rm -r "poppy-docs/es" "poppy-docs/de" "poppy-docs/nl"
 }
 
