@@ -133,38 +133,44 @@ EOF
 
 setup_desktop()
 {
-username=$1
+    username=$1
+    git_branch=$2
+    
+    echo -e "\e[33m setup_desktop \e[0m"
+    
+    # Disable some verbose logs at boot
+    sudo tee --append /boot/config.txt >/dev/null <<< "disable_splash=1"
+    sudo sed -i 's/console=tty1/console=tty3 logo.nologo vt.global_cursor_default=0/g' /boot/cmdline.txt
 
-# Disable some verbose logs at boot
-sudo tee --append /boot/config.txt >/dev/null <<< "disable_splash=1"
-sudo sed -i 's/console=tty1/console=tty3 logo.nologo vt.global_cursor_default=0/g' /boot/cmdline.txt
+    # Put some Poppy images
+    wget https://raw.githubusercontent.com/poppy-project/raspoppy/$git_branch/splash.png -O "/tmp/splash.png"
+    wget https://raw.githubusercontent.com/poppy-project/raspoppy/$git_branch/wallpaper.jpg -O "/tmp/wallpaper.jpg"
+    wget https://raw.githubusercontent.com/poppy-project/raspoppy/$git_branch/icon.png -O "/tmp/icon.png"
+    sudo mv /tmp/splash.png /usr/share/plymouth/themes/pix/splash.png
+    sudo mv /tmp/wallpaper.jpg /usr/share/rpd-wallpaper/temple.jpg
+    sudo mv /tmp/icon.png /usr/share/icons/poppy.png
 
-# Put some Poppy images
-sudo mv splash.png /usr/share/plymouth/themes/pix/splash.png
-sudo mv wallpaper.jpg /usr/share/rpd-wallpaper/temple.jpg
-sudo mv icon.png /usr/share/icons/poppy.png
+    # Desktop autologin with username
+    sudo sed -i "s/# autologin-user = /autologin-user=$username   #/g" /etc/lightdm/lightdm.conf
 
-# Desktop autologin with username
-sudo sed -i "s/# autologin-user = /autologin-user=$username   #/g" /etc/lightdm/lightdm.conf
-
-# Setup a Poppy Manager desktop entry
-sudo -u "$username" mkdir -p "/home/$username/.local/share/applications/"
-sudo -u "$username" tee "/home/$username/.local/share/applications/poppy.desktop" > /dev/null <<EOF
-[Desktop Entry]
-Encoding=UTF-8
-Name=Poppy Manager
-Icon=poppy
-Type=Application
-Categories=Office;
-Exec=xdg-open http://poppy.local/
-EOF
+#    # Setup a Poppy Manager desktop entry
+#    sudo -u "$username" mkdir -p "/home/$username/.local/share/applications/"
+#    sudo -u "$username" tee "/home/$username/.local/share/applications/poppy.desktop" > /dev/null <<EOF
+#[Desktop Entry]
+#Encoding=UTF-8
+#Name=Poppy Manager
+#Icon=poppy
+#Type=Application
+#Categories=Office;
+#Exec=xdg-open http://poppy.local/
+#EOF
 }
 
 # install_additional_packages is run first to make hrpi-version available:
 install_additional_packages
 install_custom_raspiconfig
 setup_user "$username" "$password"
-setup_desktop "$username"
+setup_desktop "$username" "$git_branch"
 system_setup
 setup_network_tools
 
