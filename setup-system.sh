@@ -141,14 +141,15 @@ sudo sed -i 's/console=tty1/console=tty3 logo.nologo vt.global_cursor_default=0/
 
 # Put some Poppy images
 sudo mv splash.png /usr/share/plymouth/themes/pix/splash.png
-sudo mv wallpaper.jpg /user/share/rpd-wallpaper/temple.jpg
+sudo mv wallpaper.jpg /usr/share/rpd-wallpaper/temple.jpg
 sudo mv icon.png /usr/share/icons/poppy.png
 
 # Desktop autologin with username
 sudo sed -i "s/# autologin-user = /autologin-user=$username   #/g" /etc/lightdm/lightdm.conf
 
 # Setup a Poppy Manager desktop entry
-sudo tee "/home/$username/.local/share/applications/poppy.desktop" > /dev/null <<EOF
+sudo -u "$username" mkdir -p "/home/$username/.local/share/applications/"
+sudo -u "$username" tee "/home/$username/.local/share/applications/poppy.desktop" > /dev/null <<EOF
 [Desktop Entry]
 Encoding=UTF-8
 Name=Poppy Manager
