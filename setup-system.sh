@@ -151,7 +151,8 @@ setup_desktop()
     sudo mv /tmp/icon.png /usr/share/icons/poppy.png
 
     # Desktop autologin with username
-    sudo sed -i "s/# autologin-user = /autologin-user=$username   #/g" /etc/lightdm/lightdm.conf
+    sudo sed -i "s/autologin-user=pi/autologin-user=$username/g" /etc/lightdm/lightdm.conf
+    sudo sed -i "s/autologin pi/autologin $username/g" /etc/systemd/system/getty@tty1.service.d/autologin.conf
 
 #    # Setup a Poppy Manager desktop entry
 #    sudo -u "$username" mkdir -p "/home/$username/.local/share/applications/"
