@@ -39,6 +39,15 @@ Options are:
 - `--shutdown`: Shutdowns the system after installation
 - `-?|--help`: Shows help
 
-### Shrink the ISO
+### Shrink the image
 
-Follow [these instructions](./shrink-iso.md) to reduce the size of the image. Be careful though, a bad manipulation could mess up your partitions!
+Assuming that you have raspoppyfied your SD card, dump it to an image file, e.g 2020-04-06-poppy-ergo-jr.img.zip and use [pishrink](https://github.com/Drewsif/PiShrink/) to make it as small as possible. Since the image after shrinking is still a large file, we split it in several zip files of 1500MB:
+
+```
+sudo dd if=/dev/mmcblk0 of=$(date +%F)-poppy-ergo-jr.img bs=1M status=progress
+wget https://raw.githubusercontent.com/Drewsif/PiShrink/master/pishrink.sh -O /tmp/pishrink.sh
+chmod +x /tmp/pishrink.sh 
+sudo /tmp/pishrink.sh $(date +%F)-poppy-ergo-jr.img.zip
+zip $(date +%F)-poppy-ergo-jr.img.zip $(date +%F)-poppy-ergo-jr.img -s 1500M
+```
+Then you can distribute your own image including the zip file and all the `z01`, `z02` ... file extension(s).
