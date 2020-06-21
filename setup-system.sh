@@ -160,7 +160,7 @@ setup_desktop()
 #[Desktop Entry]
 #Encoding=UTF-8
 #Name=Poppy Manager
-#Icon=poppy
+#Icon=/usr/share/icons/poppy.png
 #Type=Application
 #Categories=Office;
 #Exec=xdg-open http://poppy.local/
