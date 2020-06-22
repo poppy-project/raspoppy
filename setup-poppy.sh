@@ -26,13 +26,16 @@ print_env()
 
 install_poppy_libraries()
 {
-    echo -e "\e[33m install_poppy_libraries: dependance \e[0m"
-    pip install "https://github.com/poppy-project/hampy/archive/${hampy_branch}.zip"
-
-    echo -e "\e[33m install_poppy_libraries: pypot \e[0m"
-    pip install "https://github.com/poppy-project/pypot/archive/${branch}.zip"
-    echo -e "\e[33m install_poppy_libraries: $creature \e[0m"
     pushd /tmp
+        echo -e "\e[33m install_poppy_libraries: hampy \e[0m"
+        wget "https://github.com/poppy-project/hampy/archive/${hampy_branch}.zip" -O hampy-${hampy_branch}.zip
+        pip install hampy-${hampy_branch}.zip 
+        
+        echo -e "\e[33m install_poppy_libraries: pypot \e[0m"
+        wget "https://github.com/poppy-project/pypot/archive/${branch}.zip" -O pypot-$branch.zip
+        pip install pypot-$branch.zip
+    
+        echo -e "\e[33m install_poppy_libraries: $creature \e[0m"
         wget "https://github.com/poppy-project/$creature/archive/${branch}.zip" -O $creature-$branch.zip
         unzip $creature-$branch.zip
         rm -f $creature-$branch.zip
