@@ -22,7 +22,7 @@ Then open the terminal and type these commands:
 ```bash
 curl -L https://raw.githubusercontent.com/poppy-project/raspoppy/dev_gen2/raspoppyfication.sh -o /tmp/raspoppyfication.sh
 chmod +x /tmp/raspoppyfication.sh
-sudo /tmp/raspoppyfication.sh --branch=dev_gen2 | tee $HOME/log_raspoppy_$(date +%F_%H-%M).txt
+sudo /tmp/raspoppyfication.sh --branch=dev_gen2 
 ```
 
 They will install all the software detailed above, and set up the control interface. When it's done, reboot the Raspberry Pi and connect to `http://poppy.local`.
