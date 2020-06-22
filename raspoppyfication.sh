@@ -1,5 +1,5 @@
 #!/bin/bash
-exec > >(tee $HOME/log_raspoppy_$(date +%F_%H-%M).txt) 2>&1 
+exec > >(tee /home/pi/log_raspoppy_$(date +%F_%H-%M).txt) 2>&1 
 
 set -e
 
