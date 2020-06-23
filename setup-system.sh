@@ -53,22 +53,19 @@ system_setup()
     sudo sed -i 's/^#\s*\(fr_FR.UTF-8 UTF-8\)/\1/g' /etc/locale.gen
     sudo locale-gen
 
-    
-    if [ "$creature" = "poppy-ergo-jr" ]; then
-        echo -e "\e[33m Enable camera \e[0m"
-        echo "start_x=1" | sudo tee --append /boot/config.txt
-        echo "bcm2835-v4l2" | sudo tee /etc/modules-load.d/bcm2835-v4l2.conf
+    echo -e "\e[33m Start X11 at boot \e[0m"
+    echo "start_x=1" | sudo tee --append /boot/config.txt
 
+    echo -e "\e[33m Enable camera \e[0m"
+    echo "bcm2835-v4l2" | sudo tee /etc/modules-load.d/bcm2835-v4l2.conf
+
+    if [ "$creature" = "poppy-ergo-jr" ]; then
         echo -e "\e[33m Setup serial communication \e[0m"
         sudo raspi-config --disable-serial-log
-
-        #JLC: don't know if the stuff bellow must be done with RPi4 under RaspBian buster ?
-	if [ "$(hrpi-version)" != "rpi-4" ]; then
-            sudo tee --append /boot/config.txt > /dev/null <<EOF
+        sudo tee --append /boot/config.txt > /dev/null <<EOF
 init_uart_clock=16000000
 dtoverlay=pi3-miniuart-bt
 EOF
-        fi
      fi
 }
 
