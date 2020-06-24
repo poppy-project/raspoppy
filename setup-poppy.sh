@@ -28,15 +28,15 @@ install_poppy_libraries()
 {
     pushd /tmp
         echo -e "\e[33m install_poppy_libraries: hampy \e[0m"
-        wget "https://github.com/poppy-project/hampy/archive/${hampy_branch}.zip" -O hampy-${hampy_branch}.zip
+        wget --progress=dot:mega "https://github.com/poppy-project/hampy/archive/${hampy_branch}.zip" -O hampy-${hampy_branch}.zip
         pip install hampy-${hampy_branch}.zip 
         
         echo -e "\e[33m install_poppy_libraries: pypot \e[0m"
-        wget "https://github.com/poppy-project/pypot/archive/${branch}.zip" -O pypot-$branch.zip
+        wget --progress=dot:mega "https://github.com/poppy-project/pypot/archive/${branch}.zip" -O pypot-$branch.zip
         pip install pypot-$branch.zip
     
         echo -e "\e[33m install_poppy_libraries: $creature \e[0m"
-        wget "https://github.com/poppy-project/$creature/archive/${branch}.zip" -O $creature-$branch.zip
+        wget --progress=dot:mega "https://github.com/poppy-project/$creature/archive/${branch}.zip" -O $creature-$branch.zip
         unzip $creature-$branch.zip
         rm -f $creature-$branch.zip
         pushd $creature-$branch
@@ -67,7 +67,7 @@ setup_puppet_master()
         mkdir -p "$POPPY_ROOT"
     fi
     pushd "$POPPY_ROOT"
-        wget "https://github.com/poppy-project/puppet-master/archive/${puppet_master_branch}.zip" -O puppet-master.zip
+        wget --progress=dot:mega "https://github.com/poppy-project/puppet-master/archive/${puppet_master_branch}.zip" -O puppet-master.zip
         unzip puppet-master.zip
         rm -f puppet-master.zip
         mv "puppet-master-${puppet_master_branch}" puppet-master
@@ -86,7 +86,7 @@ setup_puppet_master()
 download_monitor()
 {
     echo -e "\e[33m setup_puppet_master: download_monitor \e[0m"
-    wget "https://github.com/poppy-project/poppy-monitor/archive/${monitor_branch}.zip" -O monitor.zip
+    wget --progress=dot:mega "https://github.com/poppy-project/poppy-monitor/archive/${monitor_branch}.zip" -O monitor.zip
     unzip monitor.zip
     rm -f monitor.zip
     mv "poppy-monitor-${monitor_branch}" poppy-monitor
@@ -96,7 +96,7 @@ download_monitor()
 download_viewer()
 {
     echo -e "\e[33m setup_puppet_master: download_viewer \e[0m"
-    wget "https://github.com/poppy-project/poppy-simu/archive/gh-pages${viewer_branch}.zip" -O viewer.zip
+    wget --progress=dot:mega "https://github.com/poppy-project/poppy-simu/archive/gh-pages${viewer_branch}.zip" -O viewer.zip
     unzip viewer.zip
     rm -f viewer.zip
     mv "poppy-simu-gh-pages${viewer_branch}" poppy-viewer
@@ -106,7 +106,7 @@ download_viewer()
 download_snap()
 {
     echo -e "\e[33m setup_puppet_master: download_snap \e[0m"
-    wget "https://github.com/jmoenig/Snap/archive/v${snap_version}.zip" -O snap.zip
+    wget --progress=dot:mega "https://github.com/jmoenig/Snap/archive/v${snap_version}.zip" -O snap.zip
     unzip snap.zip
     rm -f snap.zip
     mv "Snap-${snap_version}" snap
