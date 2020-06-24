@@ -140,7 +140,7 @@ download_documentation()
 {
     echo -e "\e[33m setup_puppet_master: download_documentation \e[0m"
     version=$(curl --silent https://github.com/poppy-project/poppy-docs/releases/latest | sed 's#.*tag/\(.*\)\".*#\1#')
-    wget "https://github.com/poppy-project/poppy-docs/releases/download/${version}/_book.zip" -O _book.zip
+    wget --progress=dot:mega "https://github.com/poppy-project/poppy-docs/releases/download/${version}/_book.zip" -O _book.zip
     unzip _book.zip
     rm -rf _book.zip
     mv _book poppy-docs
@@ -198,7 +198,7 @@ get_snap_project()
         mkdir -p Snap\ activities
         if [ "$creature" == "poppy-ergo-jr" ]; then
             pushd Snap\ activities
-                wget https://hal.inria.fr/hal-01384649/document -O Livret\ pédagogique.pdf
+                wget --progress=dot:mega https://hal.inria.fr/hal-01384649/document -O Livret\ pédagogique.pdf
                 #TODO make online repo with all activities and download here
             popd
         fi
@@ -233,7 +233,7 @@ get_notebooks()
         curl -o "Another language.ipynb" $repo/Another%20language.ipynb
 
         # Download community notebooks
-        wget https://github.com/poppy-project/community-notebooks/archive/master.zip -O notebooks.zip
+        wget --progress=dot:mega https://github.com/poppy-project/community-notebooks/archive/master.zip -O notebooks.zip
         unzip notebooks.zip
         rm -f notebooks.zip
         mv community-notebooks-master community-notebooks
