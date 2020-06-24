@@ -4,8 +4,6 @@
 
 git_branch=$1
 
-source $HOME/pyenv/bin/activate
-
 create_virtual_python_env()
 {
     echo -e "\e[33m Creating a virtual python env for $USER in $HOME/pyenv \e[0m"
@@ -24,7 +22,8 @@ create_virtual_python_env()
 install_python_packages()
 {
     echo -e "\e[33m install_python_packages \e[0m"
-    pip install numpy scipy==1.3.1 pyzmq==17.1 jupyter matplotlib explauto wheel pillow \
+    source $HOME/pyenv/bin/activate && pip install \
+        numpy scipy==1.3.1 pyzmq==17.1 jupyter matplotlib explauto wheel pillow \
     	opencv-contrib-python==4.1.0.25
 }
 
@@ -37,7 +36,7 @@ configure_jupyter()
     echo -e "set Jupyter folder to $JUPYTER_FOLDER"
     mkdir -p "$JUPYTER_FOLDER"
 
-    jupyter notebook --generate-config --y
+    source $HOME/pyenv/bin/activate && jupyter notebook --generate-config --y
 
     cat >> "$JUPYTER_CONFIG_FILE" <<EOF
 # --- Poppy configuration ---
@@ -61,7 +60,7 @@ define(['base/js/namespace'], function(Jupyter){
 })
 EOF
 
-    python -c """
+    source $HOME/pyenv/bin/activate python -c """
 import os
 from jupyter_core.paths import jupyter_data_dir
 d = jupyter_data_dir()
@@ -70,7 +69,7 @@ if not os.path.exists(d):
 """
     pushd /tmp
         wget --progress=dot:mega https://github.com/ipython-contrib/IPython-notebook-extensions/archive/master.zip -O master.zip
-	pip install master.zip
+	source $HOME/pyenv/bin/activate pip install master.zip
     popd
 }
 
