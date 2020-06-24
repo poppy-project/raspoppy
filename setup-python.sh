@@ -4,6 +4,8 @@
 
 git_branch=$1
 
+source $HOME/pyenv/bin/activate
+
 create_virtual_python_env()
 {
     echo -e "\e[33m Creating a virtual python env for $USER in $HOME/pyenv \e[0m"
@@ -22,8 +24,7 @@ create_virtual_python_env()
 install_python_packages()
 {
     echo -e "\e[33m install_python_packages \e[0m"
-    source $HOME/pyenv/bin/activate && pip install \
-    	numpy scipy==1.3.1 pyzmq==17.1 jupyter matplotlib explauto wheel pillow \
+    pip install numpy scipy==1.3.1 pyzmq==17.1 jupyter matplotlib explauto wheel pillow \
     	opencv-contrib-python==4.1.0.25
 }
 
@@ -36,7 +37,7 @@ configure_jupyter()
     echo -e "set Jupyter folder to $JUPYTER_FOLDER"
     mkdir -p "$JUPYTER_FOLDER"
 
-    source $HOME/pyenv/bin/activate && jupyter notebook --generate-config --y
+    jupyter notebook --generate-config --y
 
     cat >> "$JUPYTER_CONFIG_FILE" <<EOF
 # --- Poppy configuration ---
@@ -51,24 +52,26 @@ c.NotebookApp.password = ''
 # --- Poppy configuration ---
 EOF
 
-JUPYTER_CUSTOM_JS_FILE=$HOME/.jupyter/custom/custom.js
-  mkdir -p "$HOME/.jupyter/custom"
-  cat > "$JUPYTER_CUSTOM_JS_FILE" <<EOF
+    JUPYTER_CUSTOM_JS_FILE=$HOME/.jupyter/custom/custom.js
+    mkdir -p "$HOME/.jupyter/custom"
+    cat > "$JUPYTER_CUSTOM_JS_FILE" <<EOF
 /* Allow new tab to be openned in an iframe */
 define(['base/js/namespace'], function(Jupyter){
   Jupyter._target = '_self';
 })
 EOF
 
-    source $HOME/pyenv/bin/activate && python -c """
+    python -c """
 import os
 from jupyter_core.paths import jupyter_data_dir
 d = jupyter_data_dir()
 if not os.path.exists(d):
     os.makedirs(d)
 """
-
-    source $HOME/pyenv/bin/activate && pip install https://github.com/ipython-contrib/IPython-notebook-extensions/archive/master.zip
+    pushd /tmp
+        wget --progress=dot:mega https://github.com/ipython-contrib/IPython-notebook-extensions/archive/master.zip -O master.zip
+	pip install master.zip
+    popd
 }
 
 autostart_jupyter()
