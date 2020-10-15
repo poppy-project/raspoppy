@@ -346,6 +346,7 @@ EOF
 redirect_port80_webinterface()
 {
     echo -e "\e[33m redirect_port80_webinterface \e[0m"
+    sudo update-alternatives --set iptables /usr/sbin/iptables-legacy
     sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 2280
     echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
     echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
