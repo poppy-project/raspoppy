@@ -88,10 +88,6 @@ install_additional_packages()
     wget https://raw.githubusercontent.com/poppy-project/raspoppy/${git_branch}/hrpi-version.sh -O hrpi-version.sh
     sudo cp hrpi-version.sh /usr/bin/hrpi-version
     sudo chmod +x /usr/bin/hrpi-version
-    
-    # install processing (visual language programming with Java or Python)
-    echo -e "\e[33m install processing \e[0m"
-    curl https://processing.org/download/install-arm.sh | sudo sh
 }
 
 setup_network_tools()
