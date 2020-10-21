@@ -5,7 +5,7 @@
 git_branch=$1
 
 cd /tmp || exit
-wget -O rpi3-hotspot.zip "https://github.com/poppy-project/rpi3-hotspot/archive/${git_branch}.zip"
+wget --progress=dot:mega -O rpi3-hotspot.zip "https://github.com/poppy-project/rpi3-hotspot/archive/${git_branch}.zip"
 unzip rpi3-hotspot.zip
 mv rpi3-hotspot-* rpi3-hotspot
 cd rpi3-hotspot || exit
