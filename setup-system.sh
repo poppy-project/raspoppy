@@ -72,11 +72,11 @@ EOF
 install_additional_packages()
 {
     echo -e "\e[33m upgrade_system \e[0m"
-    sudo apt-get update && sudo apt upgrade -y && sudo apt autoremove -y    
+    sudo apt-get update -q && sudo apt upgrade -q -y && sudo apt autoremove -q -y    
     # added python3-venev & libatalas-base-dev for RaspBian buster:
     # removed samba* & dhcpcd, added libhdf5-dev libhdf5-serial-dev libjasper-dev for opencv
     echo -e "\e[33m install_additional_packages \e[0m"
-    sudo apt-get install -y \
+    sudo apt-get install -q -y \
         build-essential unzip whois \
         network-manager git avahi-autoipd avahi-utils \
         libxslt-dev python3-venv libatlas-base-dev \
@@ -88,6 +88,10 @@ install_additional_packages()
     wget https://raw.githubusercontent.com/poppy-project/raspoppy/${git_branch}/hrpi-version.sh -O hrpi-version.sh
     sudo cp hrpi-version.sh /usr/bin/hrpi-version
     sudo chmod +x /usr/bin/hrpi-version
+    
+    # install processing (visual language programming with Java or Python)
+    echo -e "\e[33m install processing \e[0m"
+    curl https://processing.org/download/install-arm.sh | sudo sh
 }
 
 setup_network_tools()
@@ -171,4 +175,3 @@ setup_user "$username" "$password"
 setup_desktop "$username" "$git_branch"
 system_setup
 setup_network_tools
-
