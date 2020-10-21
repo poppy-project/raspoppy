@@ -156,7 +156,7 @@ update_pypot()
 update_creature()
 {
     pushd /tmp
-        wget "https://github.com/poppy-project/$creature/archive/${b_creature}.zip" -O $creature-$b_creature.zip
+        wget --progress=dot:mega "https://github.com/poppy-project/$creature/archive/${b_creature}.zip" -O $creature-$b_creature.zip
         unzip -q $creature-$b_creature.zip
         rm -f $creature-$b_creature.zip
         pushd $creature-$b_creature
@@ -168,7 +168,7 @@ update_puppet_master()
 {
     pushd "$POPPY_ROOT"
         rm -r puppet-master
-        wget "https://github.com/poppy-project/puppet-master/archive/${branch}.zip" -O puppet-master.zip
+        wget --progress=dot:mega "https://github.com/poppy-project/puppet-master/archive/${branch}.zip" -O puppet-master.zip
         unzip -q puppet-master.zip
         rm -f puppet-master.zip
         mv "puppet-master-${branch}" puppet-master
@@ -183,7 +183,7 @@ update_monitor()
 {
     pushd "$POPPY_ROOT"
         rm -r poppy-monitor
-        wget "https://github.com/poppy-project/poppy-monitor/archive/${b_monitor}.zip" -O monitor.zip
+        wget --progress=dot:mega "https://github.com/poppy-project/poppy-monitor/archive/${b_monitor}.zip" -O monitor.zip
         unzip -q monitor.zip
         rm -f monitor.zip
         mv "poppy-monitor-${b_monitor}" poppy-monitor
@@ -194,7 +194,7 @@ update_viewer()
     sudo systemctl stop poppy-viewer.service
     pushd "$POPPY_ROOT"
         rm -r poppy-viewer
-        wget "https://github.com/poppy-project/poppy-simu/archive/gh-pages${b_viewer}.zip" -O viewer.zip
+        wget --progress=dot:mega "https://github.com/poppy-project/poppy-simu/archive/gh-pages${b_viewer}.zip" -O viewer.zip
         unzip -q viewer.zip
         rm -f viewer.zip
         mv "poppy-simu-gh-pages${b_viewer}" poppy-viewer
@@ -205,7 +205,7 @@ update_snap()
 {
     pushd "$POPPY_ROOT"
         rm -r snap
-        wget "https://github.com/jmoenig/Snap/archive/v${n_snap}.zip" -O snap.zip
+        wget --progress=dot:mega "https://github.com/jmoenig/Snap/archive/v${n_snap}.zip" -O snap.zip
         unzip -q snap.zip
         rm -f snap.zip
         mv "Snap-${n_snap}" snap
@@ -239,7 +239,7 @@ update_documentation()
     pushd "$POPPY_ROOT"
         rm -r poppy-docs
         #version=$(curl --silent https://github.com/poppy-project/poppy-docs/releases/latest | sed 's#.*tag/\(.*\)\".*#\1#')
-        wget "https://github.com/poppy-project/poppy-docs/releases/download/${n_docs}/_book.zip" -O _book.zip
+        wget --progress=dot:mega "https://github.com/poppy-project/poppy-docs/releases/download/${n_docs}/_book.zip" -O _book.zip
         unzip -q _book.zip
         rm -rf _book.zip
         mv _book poppy-docs
