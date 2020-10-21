@@ -141,7 +141,7 @@ download_documentation()
     echo -e "\e[33m setup_puppet_master: download_documentation \e[0m"
     version=$(curl --silent https://github.com/poppy-project/poppy-docs/releases/latest | sed 's#.*tag/\(.*\)\".*#\1#')
     wget --progress=dot:mega "https://github.com/poppy-project/poppy-docs/releases/download/${version}/_book.zip" -O _book.zip
-    unzip _book.zip
+    unzip -q _book.zip
     rm -rf _book.zip
     mv _book poppy-docs
     ln -s $(realpath .)/poppy-docs/en/assembly-guides/ergo-jr poppy-docs/en/assembly-guides/poppy-ergo-jr
@@ -234,7 +234,7 @@ get_notebooks()
 
         # Download community notebooks
         wget --progress=dot:mega https://github.com/poppy-project/community-notebooks/archive/master.zip -O notebooks.zip
-        unzip notebooks.zip
+        unzip -q notebooks.zip
         rm -f notebooks.zip
         mv community-notebooks-master community-notebooks
     popd
