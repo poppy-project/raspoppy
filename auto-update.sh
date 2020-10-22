@@ -38,10 +38,9 @@ hostname=$old_robot_name
 
 if [[ ! -z "$old_info_version" ]]; then
     echo -e "Puppet-master v $old_info_version doesn't support Update Function!"
-    echo -e "Please, update your $creature with flash image methode."
-    echo -e "> URL to dowload imgage-file (file in *.img.zip):"
+    echo -e "In order to update your $creature, flash a new SD card from:"
     echo -e "https://github.com/poppy-project/$creature/releases/latest"
-    echo -e "> Docs about how to burn an image-file:"
+    echo -e "> Docs about how to flash an image file:"
     echo -e "https://docs.poppy-project.org/en/installation/burn-an-image-file.html"
     echo -e ""
     echo -e "\e[33m EXIT Update \e[0m"
@@ -69,7 +68,7 @@ echo -e " "
 echo -e "\e[33m >>> Target <<<\e[0m"
 echo -e " "
 
-branch="dev_gen2"
+branch="master"
 b_pypot="$branch"
 b_creature="$branch"
 b_viewer="_$branch"
