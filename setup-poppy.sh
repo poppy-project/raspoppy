@@ -213,7 +213,9 @@ get_notebooks()
     pushd "$1"
         if [ "$creature" == "poppy-humanoid" ]; then
             repo=https://raw.githubusercontent.com/poppy-project/$creature/$branch
-            curl -o "Discover your Poppy Humanoid.ipynb" $repo/software/samples/notebooks/Demo%20Interface.ipynb
+            curl -o "Motion demonstration.ipynb" $repo/software/samples/notebooks/Demo%20Interface.ipynb
+            curl -o "Discover your Poppy Humanoid.ipynb" $repo/software/samples/notebooks/Discover%20your%20Poppy%20Humanoid.ipynb
+            curl -o "Record, save and play moves on Poppy Humanoid.ipynb" $repo/software/samples/notebooks/Record%2C%20Save%20and%20Play%20Moves%20on%20Poppy%20Humanoid.ipynb
         elif [ "$creature" == "poppy-torso" ]; then
             repo=https://raw.githubusercontent.com/poppy-project/$creature/$branch/software/samples/notebooks
             curl -o "Discover your Poppy Torso.ipynb" $repo/Discover%20your%20Poppy%20Torso.ipynb
