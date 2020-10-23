@@ -150,6 +150,8 @@ setup_desktop()
     # Desktop autologin with username
     sudo sed -i "s/autologin-user=pi/autologin-user=$username/g" /etc/lightdm/lightdm.conf
     sudo sed -i "s/autologin pi/autologin $username/g" /etc/systemd/system/getty@tty1.service.d/autologin.conf
+    
+    echo 'alias ll="ls -l"' >> ~/.bash_aliases
 
 #    # Setup a Poppy Manager desktop entry
 #    sudo -u "$username" mkdir -p "/home/$username/.local/share/applications/"
