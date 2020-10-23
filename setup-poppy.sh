@@ -10,7 +10,7 @@ branch=${3:-"master"}
 hampy_branch="master"
 
 puppet_master_branch="$branch"
-viewer_branch="_$branch"
+viewer_branch="robot_local"
 monitor_branch="master"
 snap_version="5.4.5"
 
@@ -96,10 +96,10 @@ download_monitor()
 download_viewer()
 {
     echo -e "\e[33m setup_puppet_master: download_viewer \e[0m"
-    wget --progress=dot:mega "https://github.com/poppy-project/poppy-simu/archive/gh-pages${viewer_branch}.zip" -O viewer.zip
+    wget --progress=dot:mega "https://github.com/poppy-project/poppy-simu/archive/${viewer_branch}.zip" -O viewer.zip
     unzip -q viewer.zip
     rm -f viewer.zip
-    mv "poppy-simu-gh-pages${viewer_branch}" poppy-viewer
+    mv "poppy-simu-${viewer_branch}" poppy-viewer
 }
 
 # Called from setup_puppet_master()
