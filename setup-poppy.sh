@@ -14,6 +14,11 @@ viewer_branch="robot_local"
 monitor_branch="master"
 snap_version="5.4.5"
 
+# Scratch installation
+pypot_branch="scratch-beta"
+puppet_master_branch="scratch-beta"
+scratch_version="v1.0.0-beta"
+
 export PATH="$HOME/pyenv/bin:$PATH"
 
 # activate the python virtual env for all the script
@@ -32,7 +37,7 @@ install_poppy_libraries()
         pip install hampy-${hampy_branch}.zip 
         
         echo -e "\e[33m install_poppy_libraries: pypot \e[0m"
-        wget --progress=dot:mega "https://github.com/poppy-project/pypot/archive/${branch}.zip" -O pypot-$branch.zip
+        wget --progress=dot:mega "https://github.com/poppy-project/pypot/archive/${pypot_branch}.zip" -O pypot-$branch.zip
         pip install pypot-$branch.zip
     
         echo -e "\e[33m install_poppy_libraries: $creature \e[0m"
@@ -79,6 +84,7 @@ setup_puppet_master()
         download_viewer
         download_monitor
         download_snap
+        download_scratch
     popd
 }
 
@@ -133,6 +139,18 @@ download_snap()
 
     ln -s "$snap_local_folder/pypot-snap-blocks.xml" snap/libraries/poppy.xml
     echo -e "poppy.xml\tPoppy robots" >> snap/libraries/LIBRARIES
+}
+
+# Called from setup_puppet_master()
+download_scratch()
+{
+    echo -e "\e[33m setup_puppet_master: download_scratch \e[0m"
+
+    wget --progress=dot:mega "https://github.com/poppy-project/scratch-poppy/releases/download/${scratch_version}/scratch-application.zip" -O scratch.zip
+    unzip -q scratch.zip
+    rm -f scratch.zip
+
+    mv "scratch-application" "scratch"
 }
 
 # Called from setup_puppet_master()
