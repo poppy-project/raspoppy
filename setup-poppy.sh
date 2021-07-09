@@ -9,7 +9,7 @@ branch=${3:-"master"}
 
 hampy_branch="master"
 
-puppet_master_branch="$branch"
+# puppet_master_branch="$branch"
 viewer_branch="robot_local"
 monitor_branch="master"
 snap_version="5.4.5"
