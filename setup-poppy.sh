@@ -75,7 +75,6 @@ setup_puppet_master()
         wget --progress=dot:mega "https://github.com/poppy-project/puppet-master/archive/${puppet_master_branch}.zip" -O puppet-master.zip
         unzip -q puppet-master.zip
         rm -f puppet-master.zip
-        rm -rf puppet-master  # Remove previous version of puppet-master if exists
         mv "puppet-master-${puppet_master_branch}" puppet-master
         pushd puppet-master
             pip install flask pyyaml requests
