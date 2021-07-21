@@ -17,7 +17,6 @@ snap_version="5.4.5"
 # Scratch installation
 pypot_branch="scratch-beta"
 puppet_master_branch="scratch-beta"
-scratch_version="v1.0.0-beta"
 
 export PATH="$HOME/pyenv/bin:$PATH"
 
@@ -146,7 +145,7 @@ download_scratch()
 {
     echo -e "\e[33m setup_puppet_master: download_scratch \e[0m"
 
-    wget --progress=dot:mega "https://github.com/poppy-project/scratch-poppy/releases/download/${scratch_version}/scratch-application.zip" -O scratch.zip
+    wget --progress=dot:mega "https://github.com/poppy-project/scratch-poppy/releases/latest/download/scratch-application.zip" -O scratch.zip
     unzip -q scratch.zip
     rm -f scratch.zip
 
