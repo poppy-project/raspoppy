@@ -21,7 +21,8 @@ puppet_master_branch="scratch-beta"
 export PATH="$HOME/pyenv/bin:$PATH"
 
 # activate the python virtual env for all the script
-source $HOME/pyenv/bin/activate
+# shellcheck source=./activate
+source "$HOME/pyenv/bin/activate"
 
 print_env()
 {
@@ -30,23 +31,23 @@ print_env()
 
 install_poppy_libraries()
 {
-    pushd /tmp
+    pushd /tmp || exit
         echo -e "\e[33m install_poppy_libraries: hampy \e[0m"
-        wget --progress=dot:mega "https://github.com/poppy-project/hampy/archive/${hampy_branch}.zip" -O hampy-${hampy_branch}.zip
+        wget --progress=dot:mega "https://github.com/poppy-project/hampy/archive/${hampy_branch}.zip" -O "hampy-${hampy_branch}.zip"
         pip install hampy-${hampy_branch}.zip 
         
         echo -e "\e[33m install_poppy_libraries: pypot \e[0m"
-        wget --progress=dot:mega "https://github.com/poppy-project/pypot/archive/${pypot_branch}.zip" -O pypot-$branch.zip
-        pip install pypot-$branch.zip
+        wget --progress=dot:mega "https://github.com/poppy-project/pypot/archive/${pypot_branch}.zip" -O "pypot-$branch.zip"
+        pip install "pypot-$branch.zip"
     
         echo -e "\e[33m install_poppy_libraries: $creature \e[0m"
-        wget --progress=dot:mega "https://github.com/poppy-project/$creature/archive/${branch}.zip" -O $creature-$branch.zip
-        unzip -q $creature-$branch.zip
-        rm -f $creature-$branch.zip
-        pushd $creature-$branch
+        wget --progress=dot:mega "https://github.com/poppy-project/$creature/archive/${branch}.zip" -O "$creature-$branch.zip"
+        unzip -q "$creature-$branch.zip"
+        rm -f "$creature-$branch.zip"
+        pushd "$creature-$branch" || exit
             pip install software/
-        popd
-    popd
+        popd || exit
+    popd || exit
 
     if [ -z "${POPPY_ROOT+x}" ]; then
         export POPPY_ROOT="$HOME/dev"
@@ -70,21 +71,21 @@ setup_puppet_master()
         export POPPY_ROOT="$HOME/dev"
         mkdir -p "$POPPY_ROOT"
     fi
-    pushd "$POPPY_ROOT"
+    pushd "$POPPY_ROOT" || exit
         wget --progress=dot:mega "https://github.com/poppy-project/puppet-master/archive/${puppet_master_branch}.zip" -O puppet-master.zip
         unzip -q puppet-master.zip
         rm -f puppet-master.zip
         mv "puppet-master-${puppet_master_branch}" puppet-master
-        pushd puppet-master
+        pushd puppet-master || exit
             pip install flask pyyaml requests
             python bootstrap.py "$hostname" "$creature" "--branch" "${branch}"
-        popd
+        popd || exit
         download_documentation
         download_viewer
         download_monitor
         download_snap
         download_scratch
-    popd
+    popd || exit
 }
 
 # Called from setup_puppet_master()
@@ -128,7 +129,7 @@ download_snap()
     mkdir -p "$snap_local_folder"
 
     # Link pypot Snap projets to Snap! Examples folder
-    for project in $pypot_root/server/snap_projects/*.xml; do
+    for project in "$pypot_root/server/snap_projects"/*.xml; do
         # Local file doesn"t exist yet if SnapRobotServer has not been started
         filename=$(basename "$project")
         cp "$project" "$snap_local_folder/"
@@ -162,8 +163,8 @@ download_documentation()
     unzip -q _book.zip
     rm -rf _book.zip
     mv _book poppy-docs
-    ln -s $(realpath .)/poppy-docs/en/assembly-guides/ergo-jr poppy-docs/en/assembly-guides/poppy-ergo-jr
-    ln -s $(realpath .)/poppy-docs/fr/assembly-guides/ergo-jr poppy-docs/fr/assembly-guides/poppy-ergo-jr
+    ln -s "$(realpath .)/poppy-docs/en/assembly-guides/ergo-jr" poppy-docs/en/assembly-guides/poppy-ergo-jr
+    ln -s "$(realpath .)/poppy-docs/fr/assembly-guides/ergo-jr" poppy-docs/fr/assembly-guides/poppy-ergo-jr
     rm -r "poppy-docs/es" "poppy-docs/de" "poppy-docs/nl"
 }
 
@@ -175,7 +176,7 @@ setup_documents()
         mkdir -p "$JUPYTER_FOLDER"
     fi
     mkdir -p "$JUPYTER_FOLDER/My Documents"
-    pushd "$JUPYTER_FOLDER/My Documents"
+    pushd "$JUPYTER_FOLDER/My Documents" || exit
         echo -e "create symlink"
 
         ln -s "$POPPY_ROOT" Poppy\ Source-code
@@ -183,26 +184,26 @@ setup_documents()
         #ln -s "$POPPY_ROOT/poppy-docs/The Documentation.pdf" The\ Documentation.pdf
 
         mkdir -p "$POPPY_ROOT/puppet-master/moves"
-        sed -i 's/self.moves_path=""/self.moves_path="moves\/"/' $POPPY_ROOT/pypot/server/rest.py
-        sed -i 's/#os.makedirs(self.moves_path/os.makedirs(self.moves_path/g' $POPPY_ROOT/pypot/server/rest.py
+        sed -i 's/self.moves_path=""/self.moves_path="moves\/"/' "$POPPY_ROOT/pypot/server/rest.py"
+        sed -i 's/#os.makedirs(self.moves_path/os.makedirs(self.moves_path/g' "$POPPY_ROOT/pypot/server/rest.py"
         ln -s "$POPPY_ROOT/puppet-master/moves" Moves\ recorded
 
         name=$(python -c "str = '$creature'; print(str.replace('-','_'))")
         ln -s "$POPPY_ROOT/$name/primitives" Robot\ primitives
-        pushd Robot\ primitives
+        pushd Robot\ primitives || exit
             ln -s "$POPPY_ROOT/$name/$name.py" _shortcut_to_Robot_init.py
-        popd
+        popd || exit
 
         mkdir -p "$POPPY_ROOT/puppet-master/pictures"
-        sed -i 's/cv2.imwrite(\"{}.png\"/cv2.imwrite(\"pictures\/{}.png\"/' $POPPY_ROOT/pypot/server/snap.py
-        sed -i 's/#os.makedirs(\"pictures_path\"/os.makedirs(\"pictures\"/' $POPPY_ROOT/pypot/server/snap.py
+        sed -i 's/cv2.imwrite(\"{}.png\"/cv2.imwrite(\"pictures\/{}.png\"/' "$POPPY_ROOT/pypot/server/snap.py"
+        sed -i 's/#os.makedirs(\"pictures_path\"/os.makedirs(\"pictures\"/' "$POPPY_ROOT/pypot/server/snap.py"
         ln -s "$POPPY_ROOT/puppet-master/pictures"  My\ Pictures
 
         echo -e "symlink done"
 
         get_snap_project "Snap project"
         get_notebooks "Python notebooks"
-    popd
+    popd || exit
 }
 
 # Called from setup_documents()
@@ -210,17 +211,17 @@ get_snap_project()
 {
     echo -e "\e[33m setup_documents: get_snap_project \e[0m"
     mkdir -p "$1"
-    pushd "$1"
+    pushd "$1" || exit
         ln -s "$POPPY_ROOT/snap/help/SnapManual.pdf" Snap\ Documentation.pdf
         ln -s "$POPPY_ROOT/snap/Examples" Snap\ codes
         mkdir -p Snap\ activities
         if [ "$creature" == "poppy-ergo-jr" ]; then
-            pushd Snap\ activities
+            pushd Snap\ activities || exit
                 wget --progress=dot:mega https://hal.inria.fr/hal-01384649/document -O Livret\ pédagogique.pdf
                 #TODO make online repo with all activities and download here
-            popd
+            popd || exit
         fi
-    popd
+    popd || exit
 }
 
 # Called from setup_documents()
@@ -228,36 +229,36 @@ get_notebooks()
 {
     echo -e "\e[33m setup_documents: get_notebooks \e[0m"
     mkdir -p "$1"
-    pushd "$1"
+    pushd "$1" || exit
         if [ "$creature" == "poppy-humanoid" ]; then
             repo=https://raw.githubusercontent.com/poppy-project/$creature/$branch
-            curl -o "Motion demonstration.ipynb" $repo/software/samples/notebooks/Demo%20Interface.ipynb
-            curl -o "Discover your Poppy Humanoid.ipynb" $repo/software/samples/notebooks/Discover%20your%20Poppy%20Humanoid.ipynb
-            curl -o "Record, save and play moves on Poppy Humanoid.ipynb" $repo/software/samples/notebooks/Record%2C%20Save%20and%20Play%20Moves%20on%20Poppy%20Humanoid.ipynb
+            curl -o "Motion demonstration.ipynb" "$repo/software/samples/notebooks/Demo%20Interface.ipynb"
+            curl -o "Discover your Poppy Humanoid.ipynb" "$repo/software/samples/notebooks/Discover%20your%20Poppy%20Humanoid.ipynb"
+            curl -o "Record, save and play moves on Poppy Humanoid.ipynb" "$repo/software/samples/notebooks/Record%2C%20Save%20and%20Play%20Moves%20on%20Poppy%20Humanoid.ipynb"
         elif [ "$creature" == "poppy-torso" ]; then
             repo=https://raw.githubusercontent.com/poppy-project/$creature/$branch/software/samples/notebooks
-            curl -o "Discover your Poppy Torso.ipynb" $repo/Discover%20your%20Poppy%20Torso.ipynb
-            curl -o "Record, save and play moves on Poppy Torso.ipynb" $repo/Record%2C%20Save%20and%20Play%20Moves%20on%20Poppy%20Torso.ipynb
+            curl -o "Discover your Poppy Torso.ipynb" "$repo/Discover%20your%20Poppy%20Torso.ipynb"
+            curl -o "Record, save and play moves on Poppy Torso.ipynb" "$repo/Record%2C%20Save%20and%20Play%20Moves%20on%20Poppy%20Torso.ipynb"
             mkdir -p images
-            pushd images
-              wget $repo/images/poppy_torso.jpg -O poppy_torso.jpg
-              wget $repo/images/poppy_torso_motors.png -O poppy_torso_motors.png
-            popd
+            pushd images || exit
+              wget "$repo/images/poppy_torso.jpg" -O poppy_torso.jpg
+              wget "$repo/images/poppy_torso_motors.png" -O poppy_torso_motors.png
+            popd || exit
         elif [ "$creature" == "poppy-ergo-jr" ]; then
             repo=https://raw.githubusercontent.com/poppy-project/$creature/$branch/software/samples/notebooks
-            curl -o "Discover your Poppy Ergo Jr.ipynb" $repo/Discover%20your%20Poppy%20Ergo%20Jr.ipynb
-            curl -o "Record, save and play moves on Poppy Ergo Jr.ipynb" $repo/Record%2C%20Save%20and%20Play%20Moves%20on%20Poppy%20Ergo%20Jr.ipynb
+            curl -o "Discover your Poppy Ergo Jr.ipynb" "$repo/Discover%20your%20Poppy%20Ergo%20Jr.ipynb"
+            curl -o "Record, save and play moves on Poppy Ergo Jr.ipynb" "$repo/Record%2C%20Save%20and%20Play%20Moves%20on%20Poppy%20Ergo%20Jr.ipynb"
         fi
         repo=https://raw.githubusercontent.com/poppy-project/pypot/$branch/samples/notebooks
-        curl -o "Benchmark your Poppy robot.ipynb" $repo/Benchmark%20your%20Poppy%20robot.ipynb
-        curl -o "Another language.ipynb" $repo/Another%20language.ipynb
+        curl -o "Benchmark your Poppy robot.ipynb" "$repo/Benchmark%20your%20Poppy%20robot.ipynb"
+        curl -o "Another language.ipynb" "$repo/Another%20language.ipynb"
 
         # Download community notebooks
         wget --progress=dot:mega https://github.com/poppy-project/community-notebooks/archive/master.zip -O notebooks.zip
         unzip -q notebooks.zip
         rm -f notebooks.zip
         mv community-notebooks-master community-notebooks
-    popd
+    popd || exit
 }
 
 setup_services()
