@@ -150,6 +150,7 @@ download_scratch()
     rm -f scratch.zip
 
     mv "scratch-application" "scratch"
+    cat scratch/build-version.txt
 }
 
 # Called from setup_puppet_master()
