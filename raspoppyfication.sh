@@ -70,7 +70,7 @@ git_branch=${git_branch:-"master"}
 reboot_after_install=${reboot_after_install:-0}
 
 # scratch_installation
-raspoppy_branch="scratch-beta"
+raspoppy_branch="v4"
 url_root="https://raw.githubusercontent.com/poppy-project/raspoppy/$raspoppy_branch"
 
 cd /tmp || exit

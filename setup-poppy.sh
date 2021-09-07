@@ -14,9 +14,9 @@ viewer_branch="robot_local"
 monitor_branch="master"
 snap_version="5.4.5"
 
-# Scratch installation
-pypot_branch="scratch-beta"
-puppet_master_branch="scratch-beta"
+# v4 installation
+pypot_branch="v4"
+puppet_master_branch="v4"
 
 export PATH="$HOME/pyenv/bin:$PATH"
 
