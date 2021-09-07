@@ -15,27 +15,21 @@ contains() {
 	[[ "$1" =~ (^|[[:space:]])"$2"($|[[:space:]]) ]]
 }
 
-RED="\e[91m"
+source "$HOME/pyenv/bin/activate"
+
 GREEN="\e[92m"
 YELLOW="\e[93m"
 CLEAR="\e[0m"
 
-if eval contains "$creature" $ros_robots ; then
-	install_ros "$creature"
-else
-	echo -e "${YELLOW}ROS is not available for ${creature}.${CLEAR}"
-fi
-
-
 install_ros()
 {
-	echo -e "${YELLOW}Installing ROS${CLEAR}"
+	echo -e "${YELLOW}Installing ROS for ${1}${CLEAR}"
 
 	sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu buster main" > /etc/apt/sources.list.d/ros-noetic.list'  # Set up ROS Noetic repo
 	sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654  # Add official ROS key
 
 	sudo apt update  # Pull all meta info of ROS Noetic packages
-	sudo apt-get install -y python-rosdep python-rosinstall-generator python-wstool python-rosinstall python3-empy build-essential cmake  # Dependencies for building packages
+	sudo apt-get install -y python-rosdep python-rosinstall-generator python-wstool python-rosinstall build-essential cmake  # Dependencies for building packages
 
 	sudo rosdep init  # Initialize rosdep
 	rosdep update  # fetching package information from the repos that are just initialized
@@ -49,10 +43,12 @@ install_ros()
 
 		download_poppy_controllers "$poppy_controllers_branch"
 
+    sudo /home/poppy/pyenv/bin/pipt install empy catkin_pkg
+
+		sudo ./src/catkin/bin/catkin_make -DPYTHON_EXECUTABLE=/home/poppy/pyenv/bin/python
+
 		source /opt/ros/noetic/setup.bash
 		echo 'source /opt/ros/noetic/setup.bash' >> $HOME/.bashrc
-
-		catkin_make
 	popd || exit
 
 	source $HOME/catkin_ws/devel/setup.bash
@@ -112,3 +108,9 @@ bash -c "roslaunch poppy_controllers control.launch"
 EOF
 
 }
+
+if eval contains "$creature" $ros_robots ; then
+	install_ros "$creature"
+else
+	echo -e "${YELLOW}ROS is not available for ${creature}.${CLEAR}"
+fi
