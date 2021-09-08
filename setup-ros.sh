@@ -54,8 +54,8 @@ install_ros()
 
 	popd || exit
 
-	source $HOME/catkin_ws/devel/setup.bash
-	add_line_to_bashrc 'source $HOME/catkin_ws/devel/setup.bash'
+	source $HOME/catkin_ws/devel_isolated/setup.bash
+	add_line_to_bashrc 'source $HOME/catkin_ws/devel_isolated/setup.bash'
 	add_line_to_bashrc 'export ROS_HOSTNAME=$(hostname).local'
 	add_line_to_bashrc 'export ROS_MASTER_URI=http://localhost:11311'
 
