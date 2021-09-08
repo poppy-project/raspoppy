@@ -43,23 +43,25 @@ install_ros()
 
 		download_poppy_controllers "$poppy_controllers_branch"
 
-    sudo /home/poppy/pyenv/bin/pipt install empy catkin_pkg
+    sudo $HOME/pyenv/bin/pip3 install empy catkin_pkg netifaces
 
-		sudo ./src/catkin/bin/catkin_make -DPYTHON_EXECUTABLE=/home/poppy/pyenv/bin/python
+    export PYTHONPATH="/usr/bin/python3.7:$HOME/pyenv/bin/python3"  # hard coded python3.7
+
+		sudo ./src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=Release -j2 -DPYTHON_EXECUTABLE=$HOME/pyenv/bin/python3 --install-space /opt/ros/noetic
 
 		source /opt/ros/noetic/setup.bash
-		echo 'source /opt/ros/noetic/setup.bash' >> $HOME/.bashrc
+		add_line_to_bashrc 'source /opt/ros/noetic/setup.bash'
+
 	popd || exit
 
 	source $HOME/catkin_ws/devel/setup.bash
-	echo 'source $HOME/catkin_ws/devel/setup.bash' >> $HOME/.bashrc
-	echo 'export ROS_HOSTNAME=$(hostname).local' >> $HOME/.bashrc
-	echo 'export ROS_MASTER_URI=http://localhost:11311' >> $HOME/.bashrc
+	add_line_to_bashrc 'source $HOME/catkin_ws/devel/setup.bash'
+	add_line_to_bashrc 'export ROS_HOSTNAME=$(hostname).local'
+	add_line_to_bashrc 'export ROS_MASTER_URI=http://localhost:11311'
 
 	add_ros_service
 
 	echo -e "${GREEN}ROS has been installed${CLEAR}"
-
 }
 
 
@@ -86,7 +88,7 @@ Wants=network-online.target
 After=network.target network-online.target
 [Service]
 PIDFile=/run/ros-poppy_controllers.pid
-Environment="PATH=/opt/ros/noetic/bin:/home/poppy/pyenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games"
+Environment="PATH=/opt/ros/noetic/bin:$HOME/pyenv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/games:/usr/games"
 ExecStart=/usr/local/bin/poppy_controllers
 User=poppy
 Group=poppy
@@ -101,12 +103,22 @@ EOF
 	sudo tee /usr/local/bin/poppy_controllers > /dev/null <<EOF
 #!/usr/bin/env bash
 source /opt/ros/noetic/setup.bash
-source /home/poppy/catkin_ws/devel/setup.bash
+source $HOME/catkin_ws/devel/setup.bash
 export ROS_HOSTNAME=$(hostname).local
 echo -e "=== Launching Poppy controllers - $(date '+%F %T') ==="
 bash -c "roslaunch poppy_controllers control.launch"
 EOF
 
+}
+
+add_line_to_bashrc()
+{
+  	if grep -q "$1" "$HOME/.bashrc"
+		then
+		  echo "${1} is already in .bashrc"
+		else
+		  echo "${1}" >> "$HOME/.bashrc"
+		fi
 }
 
 if eval contains "$creature" $ros_robots ; then
