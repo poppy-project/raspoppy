@@ -9,14 +9,10 @@ branch=${3:-"master"}
 
 hampy_branch="master"
 
-# puppet_master_branch="$branch"
+puppet_master_branch="$branch"
 viewer_branch="robot_local"
 monitor_branch="master"
 snap_version="5.4.5"
-
-# v4 installation
-pypot_branch="v4"
-puppet_master_branch="v4"
 
 export PATH="$HOME/pyenv/bin:$PATH"
 
@@ -37,7 +33,7 @@ install_poppy_libraries()
         pip install hampy-${hampy_branch}.zip 
         
         echo -e "\e[33m install_poppy_libraries: pypot \e[0m"
-        wget --progress=dot:mega "https://github.com/poppy-project/pypot/archive/${pypot_branch}.zip" -O "pypot-$branch.zip"
+        wget --progress=dot:mega "https://github.com/poppy-project/pypot/archive/${branch}.zip" -O "pypot-$branch.zip"
         pip install "pypot-$branch.zip"
     
         echo -e "\e[33m install_poppy_libraries: $creature \e[0m"

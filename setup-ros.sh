@@ -5,25 +5,26 @@
 
 # Function arguments
 creature=$1
-poppy_controllers_branch=${2:-"master"}
+poppy_controllers_branch=${2:-"python3"}
 
 # Available robots for ROS
 ros_robots="poppy-ergo-jr"
 
-
+# Returns boolean 'value $1 is in list $2'
 contains() {
 	[[ "$1" =~ (^|[[:space:]])"$2"($|[[:space:]]) ]]
 }
 
-source "$HOME/pyenv/bin/activate"
-
-GREEN="\e[92m"
-YELLOW="\e[93m"
+# Color for echos
+ORANGE="\e[33m"
 CLEAR="\e[0m"
+
+# activate the python virtual env for all the script
+source "$HOME/pyenv/bin/activate"
 
 install_ros()
 {
-	echo -e "${YELLOW}Installing ROS for ${1}${CLEAR}"
+	echo -e "${ORANGE} Installing ROS for ${1}${CLEAR}"
 
 	sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu buster main" > /etc/apt/sources.list.d/ros-noetic.list'  # Set up ROS Noetic repo
 	sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654  # Add official ROS key
@@ -58,16 +59,12 @@ install_ros()
 	add_line_to_bashrc 'source $HOME/catkin_ws/devel_isolated/setup.bash'
 	add_line_to_bashrc 'export ROS_HOSTNAME=$(hostname).local'
 	add_line_to_bashrc 'export ROS_MASTER_URI=http://localhost:11311'
-
-	add_ros_service
-
-	echo -e "${GREEN}ROS has been installed${CLEAR}"
 }
 
 
 download_poppy_controllers()
 {
-	echo -e "${YELLOW}Installing poppy_controller${CLEAR}"
+	echo -e "${ORANGE} Downloading poppy_controllers${CLEAR}"
 	pushd src || exit
 		wget --progress=dot:mega "https://github.com/poppy-project/poppy_controllers/archive/${1}.zip" -O poppy_controllers.zip
         unzip -q poppy_controllers.zip
@@ -79,7 +76,7 @@ download_poppy_controllers()
 
 add_ros_service()
 {
-	echo -e "${YELLOW}Creating a ROS service${CLEAR}"
+	echo -e "${ORANGE} Creating a ROS service${CLEAR}"
 
 	sudo tee /etc/systemd/system/ros-poppy_controllers.service > /dev/null <<EOF
 [Unit]
@@ -123,6 +120,10 @@ add_line_to_bashrc()
 
 if eval contains "$creature" $ros_robots ; then
 	install_ros "$creature"
+
+	add_ros_service
+
+	echo -e "${ORANGE}ROS has been installed${CLEAR}"
 else
-	echo -e "${YELLOW}ROS is not available for ${creature}.${CLEAR}"
+	echo -e "${ORANGE}ROS is not available for ${creature}.${CLEAR}"
 fi
