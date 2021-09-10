@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Using a python virtual environnement at $HOME/pyenv insted of $HOME/miniconda
+# Using a python virtual environment at $HOME/pyenv instead of $HOME/miniconda
 # replace all "conda install" by "pip3 install"
 
 creature=$1
@@ -119,7 +119,7 @@ download_snap()
     # Delete snap default examples
     rm -rf snap/Examples/EXAMPLES
 
-    # Snap projects are dynamicaly modified and copied on a local folder for acces rights issues
+    # Snap projects are dynamically modified and copied on a local folder for access rights issues
     # This snap_local_folder is defined depending the OS in pypot.server.snap.get_snap_user_projects_directory()
     snap_local_folder="$HOME/.local/share/pypot"
     mkdir -p "$snap_local_folder"
@@ -400,7 +400,7 @@ set_logo()
 {
     echo -e "\e[33m set_logo \e[0m"
     wget https://raw.githubusercontent.com/poppy-project/raspoppy/master/poppy_logo -O "$HOME/.poppy_logo"
-    # Remove old occurences of poppy_logo in .bashrc
+    # Remove old occurrences of poppy_logo in .bashrc
     sed -i /poppy_logo/d "$HOME/.bashrc"
     echo cat "$HOME/.poppy_logo" >> "$HOME/.bashrc"
 }
