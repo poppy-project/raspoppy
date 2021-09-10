@@ -6,6 +6,7 @@
 # Function arguments
 creature=$1
 poppy_controllers_branch=${2:-"python3"}
+HOSTNAME_HOME="/home/${3:-"poppy"}"
 
 # Available robots for ROS
 ros_robots="poppy-ergo-jr"
@@ -19,8 +20,15 @@ contains() {
 ORANGE="\e[33m"
 CLEAR="\e[0m"
 
+export PATH="$HOSTNAME_HOME/pyenv/bin:$PATH"
+
 # activate the python virtual env for all the script
-source "$HOME/pyenv/bin/activate"
+source "$HOSTNAME_HOME/pyenv/bin/activate"
+
+print_env()
+{
+    env
+}
 
 install_ros()
 {
@@ -42,36 +50,50 @@ install_ros()
 		wstool init src noetic-custom_ros.rosinstall  # fetch all the remote repos specified from the noetic-custom_ros.rosinstall file locally to src
 		rosdep install -y --from-paths src --ignore-src --rosdistro noetic -r --os=debian:buster  # install all system dependencies
 
-		download_poppy_controllers "$poppy_controllers_branch"
+    pip install empy catkin_pkg netifaces rospkg
 
-    sudo $HOME/pyenv/bin/pip3 install empy catkin_pkg netifaces
+    print_env
 
-    export PYTHONPATH="/usr/bin/python3.7:$HOME/pyenv/bin/python3"  # hard coded python3.7
+		sudo PYTHONPATH="/usr/lib/python3.7/dist-packages:$HOSTNAME_HOME/pyenv/lib/python3.7/dist-packages" ./src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=Release -j2 -DPYTHON_EXECUTABLE=/home/poppy/pyenv/bin/python3 --install-space /opt/ros/noetic
 
-		sudo ./src/catkin/bin/catkin_make_isolated --install -DCMAKE_BUILD_TYPE=Release -j2 -DPYTHON_EXECUTABLE=$HOME/pyenv/bin/python3 --install-space /opt/ros/noetic
+    source /opt/ros/noetic/setup.bash
+    add_line_to_bashrc 'source /opt/ros/noetic/setup.bash'
 
-		source /opt/ros/noetic/setup.bash
-		add_line_to_bashrc 'source /opt/ros/noetic/setup.bash'
+    remove_ros_packages_from_catkin_after_install
+
+    add_poppy_controllers "$poppy_controllers_branch"
 
 	popd || exit
 
-	source $HOME/catkin_ws/devel_isolated/setup.bash
-	add_line_to_bashrc 'source $HOME/catkin_ws/devel_isolated/setup.bash'
 	add_line_to_bashrc 'export ROS_HOSTNAME=$(hostname).local'
 	add_line_to_bashrc 'export ROS_MASTER_URI=http://localhost:11311'
 }
 
 
-download_poppy_controllers()
+add_poppy_controllers()
 {
 	echo -e "${ORANGE} Downloading poppy_controllers${CLEAR}"
+	mkdir -p src/
 	pushd src || exit
 		wget --progress=dot:mega "https://github.com/poppy-project/poppy_controllers/archive/${1}.zip" -O poppy_controllers.zip
-        unzip -q poppy_controllers.zip
-        rm -f poppy_controllers.zip
-        mv "poppy_controllers-${1}" poppy_controllers
-    popd || exit
+    unzip -q poppy_controllers.zip
+    rm -f poppy_controllers.zip
+    mv "poppy_controllers-${1}" poppy_controllers
+  popd || exit
+
+  catkin_make
+
+  source $HOSTNAME_HOME/catkin_ws/devel/setup.bash
+  add_line_to_bashrc 'source $HOME/catkin_ws/devel/setup.bash'
 }
+
+remove_ros_packages_from_catkin_after_install()
+{
+  echo -e "${ORANGE} Removing all built ros packages from catkin_ws${CLEAR}"
+
+  sudo rm -rf ./*
+}
+
 
 
 add_ros_service()
@@ -100,7 +122,7 @@ EOF
 	sudo tee /usr/local/bin/poppy_controllers > /dev/null <<EOF
 #!/usr/bin/env bash
 source /opt/ros/noetic/setup.bash
-source $HOME/catkin_ws/devel_isolated/setup.bash
+source $HOME/catkin_ws/devel/setup.bash
 export ROS_HOSTNAME=$(hostname).local
 echo -e "=== Launching Poppy controllers - $(date '+%F %T') ==="
 bash -c "roslaunch poppy_controllers control.launch"
@@ -110,11 +132,11 @@ EOF
 
 add_line_to_bashrc()
 {
-  	if grep -q "$1" "$HOME/.bashrc"
+  	if grep -q "$1" "$HOSTNAME_HOME/.bashrc"
 		then
 		  echo "${1} is already in .bashrc"
 		else
-		  echo "${1}" >> "$HOME/.bashrc"
+		  echo "${1}" >> "$HOSTNAME_HOME/.bashrc"
 		fi
 }
 

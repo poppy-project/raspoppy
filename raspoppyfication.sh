@@ -95,16 +95,16 @@ wget "$url_root/setup-python.sh"
 sudo -u "$poppy_username" bash setup-python.sh "$git_branch"
 echo -e " "
 TIME=$(date "+%H:%M:%S")
-echo -e "\e[33m ** Setting ROS ** \e[0m -- $TIME --"
-echo -e " "
-wget "$url_root/setup-ros.sh"
-sudo -u "$poppy_username" bash setup-ros.sh "$poppy_creature" "python3"
-echo -e " "
-TIME=$(date "+%H:%M:%S")
 echo -e "\e[33m ** Setting Poppy ** \e[0m -- $TIME --"
 echo -e " "
 wget "$url_root/setup-poppy.sh"
 sudo -u "$poppy_username" bash -i setup-poppy.sh "$poppy_creature" "$poppy_hostname" "$git_branch"
+echo -e " "
+TIME=$(date "+%H:%M:%S")
+echo -e "\e[33m ** Setting ROS ** \e[0m -- $TIME --"
+echo -e " "
+wget "$url_root/setup-ros.sh"
+sudo -u "$poppy_username" bash setup-ros.sh "$poppy_creature" "master"
 echo -e " "
 TIME=$(date "+%H:%M:%S")
 echo -e "\e[33m ** Setting Network ** \e[0m -- $TIME --"
