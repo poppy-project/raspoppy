@@ -23,8 +23,7 @@ install_python_packages()
 {
     echo -e "\e[33m install_python_packages \e[0m"
     source $HOME/pyenv/bin/activate && pip install \
-        numpy scipy==1.3.1 pyzmq==17.1 jupyter matplotlib explauto wheel pillow \
-    	"opencv-contrib-python<4.1.0.25"
+        numpy scipy==1.3.1 pyzmq==17.1 jupyter matplotlib explauto wheel pillow opencv-python-headless
 }
 
 configure_jupyter()
