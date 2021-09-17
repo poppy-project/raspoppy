@@ -5,7 +5,7 @@
 
 # Function arguments
 creature=$1
-poppy_controllers_branch=${2:-"python3"}
+poppy_controllers_branch=${2:-"master"}
 HOSTNAME_HOME="/home/${3:-"poppy"}"
 
 # Available robots for ROS
@@ -119,7 +119,7 @@ StandardError=append:/tmp/ros-poppy_controllers.log
 WantedBy=multi-user.target
 EOF
 
-	sudo tee /usr/local/bin/poppy_controllers > /dev/null <<EOF
+sudo tee /usr/local/bin/poppy_controllers > /dev/null <<EOF
 #!/usr/bin/env bash
 source /opt/ros/noetic/setup.bash
 source $HOME/catkin_ws/devel/setup.bash
