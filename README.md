@@ -11,7 +11,7 @@ While we try to keep this procedure as simple as possible, it still requires a g
 
 ### Install Raspberry Pi OS
 
-Download [the latest Raspberry Pi OS (32-bit) with desktop](https://downloads.raspberrypi.org/raspios_armhf_latest) and follow [the installing guide](https://www.raspberrypi.org/documentation/installation/installing-images/README.md). We used **2020-08-20-raspios-buster-armhf.img**. 
+Download [the latest Raspberry Pi OS (32-bit) with desktop](https://downloads.raspberrypi.org/raspios_armhf_latest) and follow [the installing guide](https://www.raspberrypi.org/documentation/installation/installing-images/README.md). We used **2021-05-07-raspios-buster-armhf.img**. 
 
 ### Setup the OS for our needs
 
