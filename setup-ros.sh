@@ -123,11 +123,12 @@ sudo tee /usr/local/bin/poppy_controllers > /dev/null <<EOF
 #!/usr/bin/env bash
 source /opt/ros/noetic/setup.bash
 source $HOME/catkin_ws/devel/setup.bash
-export ROS_HOSTNAME=$(hostname).local
+export ROS_HOSTNAME=\$(hostname).local
 echo -e "=== Launching Poppy controllers - $(date '+%F %T') ==="
 bash -c "roslaunch poppy_controllers control.launch"
 EOF
 
+sudo chmod +x /usr/local/bin/poppy_controllers
 }
 
 add_line_to_bashrc()
